@@ -1,0 +1,2589 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lo de Mari - Gestión (Local)</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/8DrnvJkc/1000062202-removebg-preview.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; overscroll-behavior-y: contain; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type='number'] { -moz-appearance: textfield; }
+        input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; height: 1em; width: 1em; margin-left: .5rem; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239CA3AF'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>"); cursor: pointer; }
+        .calendar-day { position: relative; }
+        .calendar-day.today div { border: 2px solid rgb(59 130 246); }
+        .calendar-day .note-indicator { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background-color: rgb(34 197 94); border-radius: 50%; }
+        html.dark .calendar-day .note-indicator { background-color: rgb(74 222 128); }
+        .type-btn-active { border-color: rgb(59 130 246); background-color: rgb(239 246 255); }
+        html.dark .type-btn-active { background-color: rgba(30, 64, 175, 0.5); }
+        .type-btn-inactive { border-color: rgb(209 213 219); }
+        html.dark .type-btn-inactive { border-color: rgb(75 85 99); }
+        .delete-list-item-btn { opacity: 0.5; transition: opacity 0.2s ease-in-out; }
+        li:hover .delete-list-item-btn, tr:hover .delete-list-item-btn { opacity: 1; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary .arrow { transition: transform 0.2s; }
+        details[open] > summary .arrow { transform: rotate(90deg); }
+    </style>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, }, }, }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+
+    <nav class="bg-white dark:bg-gray-800 shadow-md p-4 md:p-6 sticky top-0 z-30">
+        <div class="container mx-auto flex justify-between items-center">
+            <button id="menu-toggle-btn" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <div class="flex-grow flex justify-center">
+                <img src="https://i.ibb.co/8DrnvJkc/1000062202-removebg-preview.png" alt="Lo de Mari Logo" class="h-10 md:h-12 w-auto">
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                <svg id="theme-toggle-light" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="theme-toggle-dark" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </nav>
+
+    <div id="mobile-menu" class="fixed top-0 left-0 w-64 h-full bg-white dark:bg-gray-800 shadow-xl z-50 transform -translate-x-full transition-transform duration-300 overflow-y-auto no-scrollbar">
+        <div class="p-4">
+            <h2 class="text-xl font-bold mb-4 text-blue-600 dark:text-blue-400">Menú</h2>
+            <div class="flex flex-col space-y-2">
+                <button class="nav-btn w-full text-left px-4 py-2 rounded-lg font-medium" data-view="vender">1. Vender</button>
+                <button class="nav-btn w-full text-left px-4 py-2 rounded-lg font-medium" data-view="deudores">2. Deudores</button>
+                <button class="nav-btn w-full text-left px-4 py-2 rounded-lg font-medium" data-view="cierre-caja">3. Cierre de Caja</button>
+                <button class="nav-btn w-full text-left px-4 py-2 rounded-lg font-medium" data-view="inventario">4. Inventario</button>
+                <button class="nav-btn w-full text-left px-4 py-2 rounded-lg font-medium" data-view="finanzas">5. Finanzas</button>
+                <button class="nav-btn w-full text-left px-4 py-2 rounded-lg font-medium" data-view="verduleria">6. Resumen Verdulería</button>
+                <button class="nav-btn w-full text-left px-4 py-2 rounded-lg font-medium" data-view="historial">7. Historial</button>
+                <button class="nav-btn w-full text-left px-4 py-2 rounded-lg font-medium" data-view="configuracion">8. Configuración</button>
+            </div>
+        </div>
+    </div>
+    <div id="menu-overlay" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+    <main id="main-content" class="container mx-auto p-4 md:p-8">
+
+        <div id="view-vender" class="view hidden">
+            <div id="pos-tabs" class="flex justify-center border-b border-gray-200 dark:border-gray-700 mb-4">
+                <!-- Las pestañas se generarán aquí -->
+            </div>
+            <div class="pos-order-card grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+                <!-- Col 1: Search & Actions -->
+                <div id="pos-col-1" class="w-full space-y-4 lg:col-span-2"></div>
+                <!-- Col 2: Item List -->
+                <div id="pos-col-2" class="w-full lg:col-span-2"></div>
+                <!-- Col 3: Pending Sales -->
+                <div id="pending-sales-section" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg w-full h-fit">
+                    <h3 class="text-xl font-bold mb-4 text-yellow-600 dark:text-yellow-500 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Pendientes de Pago
+                    </h3>
+                    <ul id="pending-sales-list" class="space-y-3 max-h-[calc(100vh-15rem)] min-h-[40rem] overflow-y-auto no-scrollbar"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="pos-orders-content" class="hidden"></div>
+
+        <template id="pos-order-template">
+            <div class="pos-order-card w-full space-y-4">
+                <!-- Card 1: Add Product -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+                    <div class="space-y-2">
+                        <input type="search" class="pos-search w-full p-4 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700" placeholder="Buscar...">
+                        <select class="pos-product w-full p-4 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700"><option value="">Seleccione...</option></select>
+                        <div class="flex gap-2">
+                            <input type="number" class="pos-quantity w-1/2 p-4 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700" value="1" min="0.1" step="any">
+                            <button class="pos-add-item w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-3 rounded-lg text-base">Agregar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Item List (Middle) -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+                    <h3 class="text-xl font-bold mb-4">Pedido Actual</h3>
+                    <ul class="pos-item-list overflow-y-auto no-scrollbar space-y-2 p-1 max-h-[calc(100vh-18rem)] min-h-[40rem]"></ul>
+                </div>
+        
+                <!-- Card 3: Totals and Actions -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+                    <div class="flex justify-between items-center text-2xl font-bold mb-3">
+                        <span>TOTAL:</span>
+                        <span class="pos-total-price text-green-600 dark:text-green-400">$0</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="mb-2">
+                            <label class="block text-sm font-medium mb-1 text-center">Método de Pago</label>
+                            <div class="pos-payment-methods grid grid-cols-3 gap-2">
+                                <button data-method="Efectivo" class="payment-method-btn text-sm py-3 px-2 rounded-md border type-btn-active">Efectivo</button>
+                                <button data-method="Transferencia" class="payment-method-btn text-sm py-3 px-2 rounded-md border">Transf.</button>
+                                <button data-method="Posnet" class="payment-method-btn text-sm py-3 px-2 rounded-md border">Posnet</button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col space-y-2">
+                            <button class="pos-cobrar-btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-3 rounded-lg text-lg">Cobrar</button>
+                            <button class="pos-pending-btn w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-3 rounded-lg text-lg">Pendiente</button>
+                        </div>
+                        <div class="pt-2 mt-2 border-t border-gray-200 dark:border-gray-700">
+                            <label class="block text-sm font-medium mb-1">Enviar a Deudor</label>
+                            <div class="flex space-x-2">
+                                <select class="pos-debtor-select w-full p-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700"><option value="">Seleccionar...</option></select>
+                            </div>
+                            <button class="pos-send-to-debtor mt-2 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-3 rounded-lg text-base">Enviar a Deudor</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <div id="view-inventario" class="view hidden">
+            <h2 class="text-3xl font-bold mb-6">Gestión de Inventario</h2>
+            <form id="product-form" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+                <h3 class="text-xl font-semibold mb-4">Agregar / Editar Producto</h3>
+                <input type="hidden" id="product-id">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <div class="md:col-span-2"><label for="product-name" class="block text-sm font-medium mb-1">Nombre</label><input type="text" id="product-name" placeholder="Ej: Gaseosa" required class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div><label for="product-brand" class="block text-sm font-medium mb-1">Marca</label><input type="text" id="product-brand" placeholder="Ej: Coca-Cola" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div><label for="product-size" class="block text-sm font-medium mb-1">Gramaje/Tamaño</label><input type="text" id="product-size" placeholder="Ej: 150g, 2.25L" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div><label for="product-price" class="block text-sm font-medium mb-1">Precio ($)</label><input type="number" id="product-price" placeholder="Ej: 1500" min="0" step="0.01" required class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div><label for="product-type" class="block text-sm font-medium mb-1">Tipo Venta</label><select id="product-type" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"><option value="Unidad">Por Unidad</option><option value="Kilo">Por Kilo</option></select></div>
+                </div>
+                <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="barcode-input" class="block text-sm font-medium mb-1">Lector de Códigos (Escanear y presionar Enter)</label>
+                            <div class="flex">
+                                <input type="text" id="barcode-input" placeholder="Esperando escaneo..." class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-l-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <button type="button" id="barcode-add-btn" class="bg-gray-200 dark:bg-gray-600 px-4 rounded-r-lg hover:bg-gray-300 dark:hover:bg-gray-500">Agregar</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium mb-1">Códigos Asignados</h4>
+                            <ul id="barcode-list" class="mt-2 space-y-1 max-h-24 overflow-y-auto no-scrollbar p-2 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                                <li class="text-gray-500 text-sm italic">No hay códigos.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-center items-center space-x-4">
+                    <button type="submit" id="product-save-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Guardar Producto</button>
+                    <button type="button" id="product-clear-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Limpiar</button>
+                </div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Nota: Si vende por Kilo, ingrese el precio por 1000 gramos.</p>
+            </form>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-8 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                <h3 class="text-lg font-semibold flex-shrink-0">Aumento por Categoría</h3>
+                <select id="percentage-category" class="w-full sm:w-auto p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="General">General</option>
+                    <option value="Verduleria">Verdulería</option>
+                </select>
+                <input type="number" id="percentage-increase" placeholder="% de aumento" step="1" class="w-full sm:w-32 p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="apply-percentage-btn" class="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Aplicar Aumento</button>
+            </div>
+            <div class="mb-4"><input type="search" id="inventory-search" placeholder="Buscar producto por nombre..." class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Inventario General</h3>
+                    <div id="inventory-list-general" class="inventory-list min-h-[50vh] max-h-[70vh] overflow-y-auto no-scrollbar space-y-2 p-2 bg-gray-50 dark:bg-gray-900/50 rounded-lg"></div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Verdulería</h3>
+                    <div id="inventory-list-verduleria" class="inventory-list min-h-[50vh] max-h-[70vh] overflow-y-auto no-scrollbar space-y-2 p-2 bg-gray-50 dark:bg-gray-900/50 rounded-lg"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-deudores" class="view hidden">
+            <h2 class="text-3xl font-bold mb-6">Control de Deudores</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+                <h3 class="text-xl font-semibold mb-4">Lista de Deudores</h3>
+                <div class="mb-4"><input type="search" id="debtor-search" placeholder="Buscar deudor por nombre..." class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <ul id="debtor-list" class="space-y-2 max-h-60 overflow-y-auto no-scrollbar"></ul>
+            </div>
+            <div class="mb-8">
+                <div id="debtor-details-panel" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hidden"><h3 class="text-2xl font-semibold mb-4">Cuenta de: <span id="debtor-detail-name" class="text-blue-600 dark:text-blue-400"></span></h3><div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-4">
+                     <h4 class="text-lg font-semibold mb-3">Agregar a la cuenta (del Inventario)</h4>
+                    <div class="mb-3">
+                        <label for="debtor-item-search" class="block text-sm font-medium mb-1">Buscar Producto</label>
+                        <input type="search" id="debtor-item-search" placeholder="Escriba para buscar..." class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div><label for="debtor-product" class="block text-sm font-medium mb-1">Producto</label><select id="debtor-product" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"></select></div>
+                        <div><label for="debtor-quantity" id="debtor-quantity-label" class="block text-sm font-medium mb-1">Cantidad</label><input type="number" id="debtor-quantity" value="1" min="1" step="1" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    </div>
+                    <button id="debtor-add-item" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Anotar</button>
+                </div><h4 class="text-lg font-semibold mb-3">Items Adeudados (Cuenta Principal)</h4>
+                <div class="mb-2">
+                    <input type="search" id="debtor-account-search" placeholder="Filtrar items en cuenta..." class="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <ul id="debtor-item-list" class="mb-4 max-h-60 overflow-y-auto no-scrollbar space-y-2"></ul><hr class="my-4 border-gray-300 dark:border-gray-600">
+                <div id="debtor-saldo-favor-container" class="flex justify-between items-center text-lg font-medium mb-2 text-green-600 dark:text-green-400 hidden"><span>SALDO A FAVOR:</span><div class="flex items-center space-x-2"><span id="debtor-saldo-favor-amount">$0</span><button id="clear-saldo-favor-btn" class="text-red-500 hover:text-red-700" title="Borrar Saldo a Favor"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg></button></div></div>
+                 <div class="flex justify-between items-center text-2xl font-bold mb-4"><span>TOTAL DEUDA:</span><span id="debtor-total-price" class="text-red-600 dark:text-red-400">$0</span></div><div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2"><button id="debtor-charge-all" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Registrar Pago</button><button id="debtor-save-debt" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Guardar Deuda</button></div><div id="saved-debts-section" class="mt-8 border-t-2 border-dashed border-gray-300 dark:border-gray-600 pt-6"></div></div>
+                <div id="debtor-details-placeholder" class="flex items-center justify-center bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-inner h-full min-h-[200px] md:min-h-full"><p class="text-gray-500 dark:text-gray-400">Seleccione un deudor para ver su cuenta.</p></div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+                <h3 class="text-xl font-semibold mb-4">Agregar Nuevo Deudor</h3>
+                <form id="add-debtor-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div class="md:col-span-2"><label for="debtor-name" class="block text-sm font-medium mb-1">Nombre del Deudor</label><input type="text" id="debtor-name" placeholder="Nombre y Apellido" required class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Agregar Deudor</button>
+                </form>
+            </div>
+            <div class="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center text-2xl font-bold">
+                    <span>DEUDA TOTAL (TODOS):</span>
+                    <span id="all-debtors-total" class="text-red-600 dark:text-red-400">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-finanzas" class="view hidden">
+            <h2 class="text-3xl font-bold mb-6">Gestión Financiera</h2>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg mb-6 flex items-center justify-center space-x-4">
+                 <button id="prev-month-finanzas" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">&lt;</button>
+                 <h3 id="month-year-finanzas" class="text-xl font-semibold"></h3>
+                 <button id="next-month-finanzas" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">&gt;</button>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+                <h3 class="text-xl font-semibold mb-4">Agregar Gasto</h3>
+                <form id="add-expense-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end"> 
+                    <div class="md:col-span-1"><label for="expense-date" class="block text-sm font-medium mb-1">Fecha Gasto</label><input type="date" id="expense-date" required class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div class="md:col-span-1"><label for="expense-description" class="block text-sm font-medium mb-1">Descripción</label><input type="text" id="expense-description" placeholder="Ej: Pollo, Pan" required class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div class="md:col-span-1"><label for="expense-amount" class="block text-sm font-medium mb-1">Monto ($)</label><input type="number" id="expense-amount" placeholder="Ej: 10000" min="1" step="1" required class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Agregar Gasto</button>
+                </form>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">Resumen del Mes Seleccionado</h3>
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between font-bold text-green-600 dark:text-green-400"><span>Total Ganancias (Ventas):</span><span id="summary-total-sales-earnings">$0</span></div>
+                    <div class="flex justify-between font-bold text-blue-500 dark:text-blue-400"><span>Total Cobro Deudas:</span><span id="summary-total-debtor-earnings">$0</span></div>
+                    <div class="flex justify-between font-bold text-red-600 dark:text-red-400"><span>Total Gastos:</span><span id="summary-total-expenses">$0</span></div>
+                </div>
+                <div class="flex justify-between font-bold text-green-600 dark:text-green-400 text-xl mt-4 pt-4 border-t border-gray-300 dark:border-gray-700">
+                    <span>GANANCIA NETA MES:</span>
+                    <span id="summary-total-net-earnings">$0</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2">Gastos Registrados en el Mes</h4>
+                        <ul id="summary-expenses-list" class="max-h-80 overflow-y-auto no-scrollbar space-y-1 text-sm"></ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2">Ganancias Diarias Registradas</h4>
+                        <ul id="summary-daily-earnings-list" class="max-h-80 overflow-y-auto no-scrollbar space-y-1 text-sm"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 text-center">Gráfico del Mes</h3>
+                <div class="relative h-64 md:h-80"><canvas id="finance-chart"></canvas></div>
+            </div>
+        </div>
+
+        <div id="view-verduleria" class="view hidden">
+            <h2 class="text-3xl font-bold mb-6">Resumen de Verdulería</h2>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg mb-6 flex items-center justify-center space-x-4">
+                <button id="prev-month-verduleria" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">&lt;</button>
+                <h3 id="month-year-verduleria" class="text-xl font-semibold"></h3>
+                <button id="next-month-verduleria" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">&gt;</button>
+           </div>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">Ventas del Mes Seleccionado</h3>
+                <h4 class="text-lg font-semibold mb-2">Total por Día</h4>
+                <div id="verduleria-daily-totals" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-sm mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg"></div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Este resumen muestra el total vendido para cada artículo de la categoría "Verdulería" durante el mes seleccionado en la vista de Finanzas.</p>
+                <ul id="verduleria-summary-list" class="max-h-[70vh] overflow-y-auto no-scrollbar space-y-2"></ul>
+            </div>
+        </div>
+
+         <div id="view-cierre-caja" class="view hidden">
+             <h2 class="text-3xl font-bold mb-6">Cierre de Caja</h2>
+             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-5xl mx-auto">
+                 <h3 class="text-xl font-semibold mb-4 text-center">Ventas Confirmadas Pendientes</h3>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                     <div>
+                         <h4 class="font-semibold text-lg mb-2 text-green-600 dark:text-green-400">Efectivo</h4>
+                         <ul id="cierre-list-efectivo" class="max-h-40 overflow-y-auto no-scrollbar space-y-2 text-sm p-2 bg-gray-50 dark:bg-gray-900/50 rounded-lg"></ul>
+                         <div class="flex justify-end font-bold text-base pt-2 pr-2"><span>Subtotal: </span><span id="cierre-subtotal-efectivo" class="ml-2">$0</span></div>
+                     </div>
+                     <div>
+                         <h4 class="font-semibold text-lg mb-2 text-blue-600 dark:text-blue-400">Transferencia</h4>
+                         <ul id="cierre-list-transferencia" class="max-h-40 overflow-y-auto no-scrollbar space-y-2 text-sm p-2 bg-gray-50 dark:bg-gray-900/50 rounded-lg"></ul>
+                         <div class="flex justify-end font-bold text-base pt-2 pr-2"><span>Subtotal: </span><span id="cierre-subtotal-transferencia" class="ml-2">$0</span></div>
+                     </div>
+                     <div>
+                         <h4 class="font-semibold text-lg mb-2 text-purple-600 dark:text-purple-400">Posnet</h4>
+                         <ul id="cierre-list-posnet" class="max-h-32 overflow-y-auto no-scrollbar space-y-2 text-sm p-2 bg-gray-50 dark:bg-gray-900/50 rounded-lg"></ul>
+                         <div class="text-right pt-2 pr-2 space-y-1 text-sm">
+                            <div><span>Subtotal: </span><span id="cierre-subtotal-posnet-bruto" class="ml-2">$0</span></div>
+                            <div class="text-red-500"><span>-4%: </span><span id="cierre-subtotal-posnet-descuento" class="ml-2">$0</span></div>
+                            <div class="font-bold text-base"><span>Total: </span><span id="cierre-subtotal-posnet-neto" class="ml-2">$0</span></div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="border-t-2 border-gray-300 dark:border-gray-600 pt-4 mb-6 space-y-2">
+                     <div class="flex justify-between items-center font-bold text-xl">
+                         <span>TOTAL A REGISTRAR:</span>
+                         <span id="cierre-total-pending" class="text-indigo-600 dark:text-indigo-400">$0</span>
+                     </div>
+                 </div>
+                 <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                     <button id="record-manana" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">Registrar en MAÑANA</button>
+                     <button id="record-tarde" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">Registrar en TARDE</button>
+                 </div>
+                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">Registra el total pendiente de las ventas confirmadas en el turno correspondiente.</p>
+             </div>
+         </div>
+
+        <div id="view-configuracion" class="view hidden">
+            <h2 class="text-3xl font-bold mb-6">Configuración y Datos</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Exportar Datos</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Guarda todos los datos de la aplicación (inventario, deudores, finanzas, etc.) en un único archivo de respaldo. Guarda este archivo en un lugar seguro, como un pendrive.</p>
+                    <button id="export-data-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Exportar a Archivo (.json)</button>
+                </div>
+                <hr class="border-gray-300 dark:border-gray-600">
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Importar Datos</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4"><strong class="text-red-500">Atención:</strong> Cargar desde un archivo reemplazará todos los datos actuales en la aplicación.</p>
+                    <input type="file" id="import-data-input" class="hidden" accept=".json">
+                    <button id="import-data-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Importar desde Archivo (.json)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-historial" class="view hidden">
+            <h2 class="text-3xl font-bold mb-6">Historial de Movimientos</h2>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg mb-6">
+                <div class="flex flex-wrap justify-center gap-2">
+                    <button id="historial-filter-today" class="historial-filter-btn px-4 py-2 text-sm font-medium rounded-md bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">Hoy</button>
+                    <button id="historial-filter-week" class="historial-filter-btn px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">Esta Semana</button>
+                    <button id="historial-filter-month" class="historial-filter-btn px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">Este Mes</button>
+                    <button id="historial-filter-year" class="historial-filter-btn px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">Por Año</button>
+                </div>
+            </div>
+            <div id="sales-history-container" class="space-y-6 max-h-[75vh] overflow-y-auto no-scrollbar pr-2">
+            </div>
+        </div>
+
+    </main>
+
+    <button id="quick-save-btn" class="fixed bottom-5 right-5 bg-blue-600 hover:bg-blue-700 text-white font-bold p-4 rounded-full shadow-lg z-50 transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+        </svg>
+    </button>
+
+    <div id="toast" class="fixed bottom-20 right-5 bg-green-600 text-white py-2 px-4 rounded-lg shadow-lg transform translate-x-[120%] transition-transform duration-300 z-50"><span id="toast-message"></span></div>
+    <div id="confirm-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden"><div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-11/12 md:w-1/3"><h3 id="modal-title" class="text-xl font-semibold mb-4">Confirmar</h3><p id="modal-message" class="mb-6">¿Estás seguro?</p><div class="flex justify-end space-x-4"><button id="modal-cancel-btn" class="px-4 py-2 rounded-lg bg-gray-500 hover:bg-gray-600 text-white font-medium transition-colors">Cancelar</button><button id="modal-confirm-btn" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors">Confirmar</button></div></div></div>
+    <div id="split-payment-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-11/12 md:w-1/3">
+            <h3 class="text-xl font-semibold mb-4">Registrar Venta</h3>
+            <div class="mb-4 text-center">
+                <p class="text-gray-600 dark:text-gray-400">Total de la Venta:</p>
+                <p id="split-total-amount" class="text-3xl font-bold text-green-600 dark:text-green-400">$0</p>
+            </div>
+            <div class="space-y-3 mb-4">
+                <div><label for="split-efectivo" class="block text-sm font-medium">Efectivo</label><input type="number" id="split-efectivo" placeholder="Monto" class="split-input w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700"></div>
+                <div><label for="split-transferencia" class="block text-sm font-medium">Transferencia</label><input type="number" id="split-transferencia" placeholder="Monto" class="split-input w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700"></div>
+                <div><label for="split-posnet" class="block text-sm font-medium">Posnet</label><input type="number" id="split-posnet" placeholder="Monto" class="split-input w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700"></div>
+            </div>
+            <div class="mb-6 text-center"><p id="split-remaining-label" class="text-gray-600 dark:text-gray-400">Total a Pagar:</p><p id="split-remaining" class="text-2xl font-bold text-green-600 dark:text-green-400">$0</p></div>
+            <div class="flex justify-end space-x-4 mb-6"><button id="split-cancel-btn" class="px-4 py-2 rounded-lg bg-gray-500 hover:bg-gray-600 text-white font-medium">Cancelar</button><button id="split-confirm-btn" class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium" disabled>Registrar Pago Completo</button></div>
+            
+            <div id="split-to-debtor-section" class="border-t-2 border-dashed border-gray-300 dark:border-gray-600 pt-4 hidden">
+                <h4 class="text-lg font-semibold mb-2 text-center">Enviar Restante a Deudor</h4>
+                <div class="mb-2">
+                    <select id="split-debtor-select" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"><option value="">Seleccionar deudor...</option></select>
+                </div>
+                <button id="split-send-to-debtor-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-colors" disabled>Registrar Pago y Enviar Resto a Deudor</button>
+            </div>
+        </div>
+    </div>
+    <div id="debtor-payment-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-11/12 md:w-1/3">
+            <h3 class="text-xl font-semibold mb-4">Registrar Pago de Deudor</h3>
+            <div class="mb-4 text-center">
+                <p class="text-gray-600 dark:text-gray-400">Deuda Total:</p>
+                <p id="debtor-payment-total-debt" class="text-3xl font-bold text-red-600 dark:text-red-400">$0</p>
+            </div>
+            <div class="space-y-3 mb-4">
+                <div><label for="debtor-payment-amount-input" class="block text-sm font-medium">Monto a Pagar</label><input type="number" id="debtor-payment-amount-input" placeholder="Monto" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700"></div>
+                <div><label class="block text-sm font-medium">Método de Pago</label><div id="debtor-payment-methods" class="grid grid-cols-3 gap-2">
+                    <button data-method="Efectivo" class="payment-method-btn type-btn-active flex-1 p-2 rounded-lg border-2">Efectivo</button><button data-method="Transferencia" class="payment-method-btn type-btn-inactive flex-1 p-2 rounded-lg border-2">Transferencia</button><button data-method="Posnet" class="payment-method-btn type-btn-inactive flex-1 p-2 rounded-lg border-2">Posnet</button>
+                </div></div>
+            </div>
+            <div class="flex justify-end space-x-4"><button id="debtor-payment-cancel-btn" class="px-4 py-2 rounded-lg bg-gray-500 hover:bg-gray-600 text-white font-medium">Cancelar</button><button id="debtor-payment-confirm-btn" class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium">Confirmar Pago</button></div>
+        </div>
+    </div>
+
+    <script>
+        let localInventory = [];
+        let posSales = [];
+        let activePosSaleIndex = 0;
+        let currentDebtors = [];
+        let currentDebtorId = null;
+        let currentDebtorData = null;
+        let pendingPayments = [];
+        let calendarNotes = {};
+        let currentCalendarDate = new Date();
+        let salesHistory = [];
+        
+        let allExpenses = {};
+        let dailyEarnings = {};
+        let currentFinanceDate = new Date();
+        let financeChart = null;
+        let tempBarcodes = [];
+        
+        const APP_STATE_PREFIX = 'loDeMari_appState_';
+        const CUMULATIVE_DEBT_ID = 'fiado-acumulado-id';
+
+        function generateId() {
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                try { return crypto.randomUUID(); } catch(e) {}
+            }
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        function roundPrice(price) {
+            if (price <= 0) return 0;
+            const remainder = price % 100;
+            const base = Math.floor(price / 100) * 100;
+            if (remainder === 0) return price;
+            if (remainder <= 50) return base + 50;
+            return base + 100;
+        }
+        function formatNumber(num) { return num.toLocaleString('es-AR'); }
+        function getYearMonth(date) { return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`; }
+        function getYearMonthDay(date) { return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; }
+
+        function saveAllData() {
+            saveInventory();
+            saveDebtors();
+            savePendingPayments();
+            saveExpenses();
+            saveDailyEarnings();
+            saveSalesHistory();
+            console.log("Todos los datos guardados en localStorage.");
+        }
+        function saveToStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+        function loadFromStorage(key, defaultValue = null) { 
+            const data = localStorage.getItem(key); 
+            try {
+                return data ? JSON.parse(data) : defaultValue; 
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+
+        function saveInventory() { saveToStorage('loDeMari_inventory', localInventory); }
+        function loadInventory() {
+            const data = loadFromStorage('loDeMari_inventory', []);
+            localInventory = data.map(p => ({ 
+                ...p, 
+                price: roundPrice(p.price),
+                category: p.category || 'General',
+                size: p.size || '',
+                barcodes: p.barcodes || []
+            }));
+            localInventory.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        function saveDebtors() { saveToStorage('loDeMari_debtors', currentDebtors); }
+        function loadDebtors() { 
+            const data = loadFromStorage('loDeMari_debtors', []);
+            
+            const ensureLockedPrice = (item) => {
+                let lockedPrice = item.lockedPrice;
+                if (lockedPrice === undefined) {
+                    const product = localInventory.find(p => p.id === item.productId);
+                    lockedPrice = product ? product.price : 0;
+                }
+                return { ...item, id: item.id || generateId(), lockedPrice };
+            };
+
+            currentDebtors = data.map(debtor => ({
+                ...debtor,
+                id: debtor.id || generateId(),
+                history: debtor.history || [],
+                items: (debtor.items || []).map(ensureLockedPrice),
+                savedDebts: (debtor.savedDebts || []).map(sd => ({
+                    ...sd, 
+                    saldoFavor: sd.saldoFavor || 0,
+                    items: (sd.items || []).map(ensureLockedPrice)
+                })),
+                saldoFavor: debtor.saldoFavor || 0
+            })); 
+            currentDebtors.sort((a, b) => a.name.localeCompare(b.name)); 
+        }
+        function savePendingPayments() { saveToStorage('loDeMari_pendingPayments', pendingPayments); }
+        function loadPendingPayments() { 
+            const loaded = loadFromStorage('loDeMari_pendingPayments', []); 
+            pendingPayments = Array.isArray(loaded) ? loaded : []; 
+        }
+        function saveExpenses() { saveToStorage('loDeMari_allExpenses', allExpenses); }
+        function loadExpenses() { allExpenses = loadFromStorage('loDeMari_allExpenses', {}); }
+        function saveDailyEarnings() { saveToStorage('loDeMari_dailyEarnings', dailyEarnings); }
+        function loadDailyEarnings() {
+            const data = loadFromStorage('loDeMari_dailyEarnings', {});
+            for (const dateKey in data) {
+                const dayData = data[dateKey] || {};
+                if (dayData) {
+                    ['manana', 'tarde'].forEach(shift => {
+                        if (typeof dayData[shift] === 'number') {
+                            dayData[shift] = { total: dayData[shift], Efectivo: dayData[shift], Transferencia: 0, Posnet: 0 };
+                        } else if (typeof dayData[shift] === 'undefined' || dayData[shift] === null) {
+                            dayData[shift] = { total: 0, Efectivo: 0, Transferencia: 0, Posnet: 0 };
+                        }
+                    });
+                    if (!dayData.pendingSales) dayData.pendingSales = [];
+                    if (!dayData.debtorPayments) dayData.debtorPayments = [];
+                }
+            }
+            dailyEarnings = data;
+        }
+        function savePosSales() { saveToStorage('loDeMari_posSales', posSales); }
+        function loadPosSales() { 
+            let loadedSales = loadFromStorage('loDeMari_posSales', []);
+            if (!Array.isArray(loadedSales) || loadedSales.length < 4) {
+                loadedSales = Array(4).fill(null).map(() => ({ items: [], debtorId: '', paymentMethod: 'Efectivo' }));
+            }
+            posSales = loadedSales.slice(0, 4).map(sale => sale || { items: [], debtorId: '', paymentMethod: 'Efectivo' });
+            activePosSaleIndex = parseInt(loadFromStorage('loDeMari_activePosSaleIndex', '0')) || 0;
+        }
+        function saveSalesHistory() { saveToStorage('loDeMari_salesHistory', salesHistory); }
+        function loadSalesHistory() {
+            salesHistory = loadFromStorage('loDeMari_salesHistory', []);
+        }
+
+        function setupNavigation() { const btns = document.querySelectorAll('.nav-btn'), menu = document.getElementById('mobile-menu'), overlay = document.getElementById('menu-overlay'); btns.forEach(b => { b.addEventListener('click', () => { const viewId = b.getAttribute('data-view'); switchView(viewId); menu.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }); }); }
+        
+        function switchView(viewId, callback = null) {
+            localStorage.setItem('loDeMari_currentView', viewId);
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.getElementById('main-content').classList.toggle('max-w-full', viewId === 'vender');
+            const targetView = document.getElementById(`view-${viewId}`) || document.getElementById('view-vender'); // Fallback to vender view
+            targetView.classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                const active = b.getAttribute('data-view') === viewId;
+                b.classList.toggle('bg-blue-100', active); b.classList.toggle('dark:bg-blue-900', active);
+                b.classList.toggle('text-blue-700', active); b.classList.toggle('dark:text-blue-300', active);
+            });
+
+            updateUIForNewView(viewId, callback);
+        }
+
+        function updateUIForNewView(viewId, callback = null) {
+            // Se usa requestAnimationFrame para asegurar que las actualizaciones de UI
+            // se ejecuten después de que el navegador haya renderizado los cambios de vista.            
+            requestAnimationFrame(() => {
+                if (viewId === 'vender') { updateProductSelects(); renderSaleList(); renderPendingSales(); }
+                if (viewId === 'deudores') { updateProductSelects(); renderDebtorList(); updatePosDebtorSelect(); if(currentDebtorId) showDebtorDetails(currentDebtorId, false); }
+                if (viewId === 'inventario') { InventoryService.render(); }
+                if (viewId === 'finanzas' || viewId === 'verduleria') { renderFinanzasView(); }
+                if (viewId === 'cierre-caja') { updateCierreCajaView(); }
+                if (viewId === 'configuracion') { setupImportExport(); }
+                if (viewId === 'historial') { renderSalesHistory(); }
+
+                if (callback) {
+                    callback();
+                }
+            });
+        }
+
+        function setupHamburgerMenu() { const btn = document.getElementById('menu-toggle-btn'), menu = document.getElementById('mobile-menu'), overlay = document.getElementById('menu-overlay'); btn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }); overlay.addEventListener('click', () => { menu.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }); }
+        function setupThemeToggle() { const btn = document.getElementById('theme-toggle'), light = document.getElementById('theme-toggle-light'), dark = document.getElementById('theme-toggle-dark'), html = document.documentElement; const update = () => { const isDark = html.classList.contains('dark'); light.classList.toggle('hidden', !isDark); dark.classList.toggle('hidden', isDark); localStorage.setItem('loDeMari_theme', isDark ? 'dark' : 'light'); const textColor = isDark ? '#FFF' : '#333'; if (financeChart) { try { financeChart.options.plugins.legend.labels.color = textColor; financeChart.options.plugins.title.color = textColor; financeChart.update('none'); } catch (e) { console.error("Error updating chart colors:", e); } } }; if (localStorage.getItem('loDeMari_theme') === 'dark') { html.classList.add('dark'); } else { html.classList.remove('dark'); } update(); btn.addEventListener('click', () => { html.classList.toggle('dark'); update(); }); }
+        function setupSearchFilters() { document.getElementById('inventory-search').addEventListener('input', (e) => { InventoryService.render(e.target.value); localStorage.setItem(APP_STATE_PREFIX + 'inventory-search', e.target.value); }); document.getElementById('debtor-search').addEventListener('input', (e) => { renderDebtorList(e.target.value); localStorage.setItem(APP_STATE_PREFIX + 'debtor-search', e.target.value); }); }
+        function showToast(message, isError = false) { const t = document.getElementById('toast'), m = document.getElementById('toast-message'); m.textContent = message; t.className = `fixed bottom-20 right-5 text-white py-2 px-4 rounded-lg shadow-lg transform transition-transform duration-300 z-50 ${isError ? 'bg-red-600' : 'bg-green-600'}`; t.classList.remove('translate-x-[120%]'); setTimeout(() => { t.classList.add('translate-x-[120%]'); }, 3000); }
+        function showModal(title, message) { const m = document.getElementById('confirm-modal'); document.getElementById('modal-title').textContent = title; document.getElementById('modal-message').textContent = message; m.classList.remove('hidden'); return new Promise((res) => { document.getElementById('modal-confirm-btn').onclick = () => { m.classList.add('hidden'); res(true); }; document.getElementById('modal-cancel-btn').onclick = () => { m.classList.add('hidden'); res(false); }; }); }
+        function setupQuickSave() { document.getElementById('quick-save-btn').addEventListener('click', () => { saveAllData(); showToast("Cambios guardados."); }); document.getElementById('debtor-item-search').addEventListener('input', (e) => { updateProductSelects(e.target.value, 'debtor'); }); document.getElementById('debtor-item-search').addEventListener('search', (e) => { if (!e.target.value) updateProductSelects('', 'debtor'); }); }
+
+        function syncDebtorPrices(productId, newPrice) {
+            let hasChanges = false;
+            currentDebtors.forEach(debtor => {
+                const updateItemPrice = (item) => {
+                    if (item.productId === productId && newPrice > (item.lockedPrice || 0)) {
+                        item.lockedPrice = newPrice;
+                        hasChanges = true;
+                    }
+                };
+                // Sincronizar cuenta principal y deudas guardadas simultáneamente
+                debtor.items.forEach(updateItemPrice);
+                (debtor.savedDebts || []).forEach(sd => (sd.items || []).forEach(updateItemPrice));
+            });
+            if (hasChanges) saveDebtors(); // Solo guarda si hubo un aumento real
+        }
+
+        const InventoryService = {
+            init() {
+                document.getElementById('product-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.save();
+                });
+                document.getElementById('product-clear-btn').addEventListener('click', () => this.clearForm());
+                document.getElementById('apply-percentage-btn').addEventListener('click', () => this.applyPercentageIncrease());
+                this.setupBarcodeHandling();
+                this.setupDragAndDrop();
+            },
+            save() {
+                const id = document.getElementById('product-id').value;
+                const data = {
+                    name: document.getElementById('product-name').value,
+                    brand: document.getElementById('product-brand').value || '',
+                    size: document.getElementById('product-size').value || '',
+                    price: parseFloat(document.getElementById('product-price').value),
+                    type: document.getElementById('product-type').value,
+                    barcodes: tempBarcodes
+                };
+                if (isNaN(data.price) || data.price < 0) {
+                    showToast("Precio inválido.", true);
+                    return;
+                }
+                data.price = roundPrice(data.price);
+                if (id) {
+                    const index = localInventory.findIndex(p => p.id === id);
+                    if (index !== -1) {
+                        const existingCategory = localInventory[index].category;
+                        localInventory[index] = { ...localInventory[index], ...data, category: existingCategory };
+                        syncDebtorPrices(id, data.price);
+                        showToast("Producto actualizado.");
+                    }
+                } else {
+                    data.id = generateId();
+                    data.category = 'General';
+                    localInventory.push(data);
+                    showToast("Producto agregado.");
+                }
+                saveInventory();
+                loadInventory();
+                this.render();
+                updateProductSelects();
+                this.clearForm();
+            },
+            async delete(id) {
+                const product = localInventory.find(p => p.id === id);
+                const confirmed = await showModal("Confirmar Borrado", `¿Borrar "${product?.name || 'este producto'}"?`);
+                if (confirmed) {
+                    localInventory = localInventory.filter(p => p.id !== id);
+                    saveInventory();
+                    loadInventory();
+                    showToast("Producto borrado.");
+                    this.render();
+                    updateProductSelects();
+                }
+            },
+            edit(id) {
+                const product = localInventory.find(p => p.id === id);
+                if (product) {
+                    document.getElementById('product-id').value = product.id;
+                    document.getElementById('product-name').value = product.name;
+                    document.getElementById('product-brand').value = product.brand;
+                    document.getElementById('product-size').value = product.size || '';
+                    document.getElementById('product-price').value = product.price;
+                    document.getElementById('product-type').value = product.type;
+                    tempBarcodes = [...(product.barcodes || [])];
+                    this.renderBarcodeList();
+                    document.getElementById('product-save-btn').innerText = 'Actualizar';
+                    document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
+                }
+            },
+            clearForm() {
+                document.getElementById('product-form').reset();
+                document.getElementById('product-id').value = '';
+                document.getElementById('product-save-btn').innerText = 'Guardar Producto';
+                localStorage.removeItem(APP_STATE_PREFIX + 'product-form');
+                tempBarcodes = [];
+                this.renderBarcodeList();
+            },
+            render() {
+                const filter = document.getElementById('inventory-search')?.value || '';
+                const generalList = document.getElementById('inventory-list-general');
+                const verduleriaList = document.getElementById('inventory-list-verduleria');
+                generalList.innerHTML = '';
+                verduleriaList.innerHTML = '';
+                const term = filter.trim().toLowerCase();
+                const filtered = localInventory.filter(p => p.name.toLowerCase().includes(term) || (p.brand && p.brand.toLowerCase().includes(term)));
+
+                const createItemElement = (p) => {
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center bg-white dark:bg-gray-800 p-3 rounded-lg shadow cursor-grab";
+                    li.draggable = true;
+                    li.dataset.id = p.id;
+                    li.innerHTML = `
+                        <div class="flex-grow">
+                            <p class="font-medium">${p.name} <span class="text-sm text-gray-500 dark:text-gray-400">${[p.brand, p.size].filter(Boolean).join(' ')}</span></p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">$${formatNumber(p.price)} ${p.type === 'Kilo' ? '<span class="text-xs">/kg</span>' : ''}</p>
+                        </div>
+                        <div class="flex-shrink-0 space-x-2 ml-2">
+                            <button class="edit-btn text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-200" data-id="${p.id}">Editar</button>
+                            <button class="delete-btn text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-200" data-id="${p.id}">Borrar</button>
+                        </div>`;
+                    li.querySelector('.edit-btn').addEventListener('click', (e) => { e.stopPropagation(); this.edit(p.id); });
+                    li.querySelector('.delete-btn').addEventListener('click', (e) => { e.stopPropagation(); this.delete(p.id); });
+                    return li;
+                };
+
+                filtered.forEach(p => {
+                    const itemEl = createItemElement(p);
+                    if (p.category === 'Verduleria') {
+                        verduleriaList.appendChild(itemEl);
+                    } else {
+                        generalList.appendChild(itemEl);
+                    }
+                });
+
+                if (generalList.innerHTML === '') generalList.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 p-4">No hay productos generales.</p>`;
+                if (verduleriaList.innerHTML === '') verduleriaList.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 p-4">Arrastra productos aquí.</p>`;
+            },
+            async applyPercentageIncrease() {
+                const percentage = parseFloat(document.getElementById('percentage-increase').value);
+                const category = document.getElementById('percentage-category').value;
+                if (isNaN(percentage) || percentage <= 0) { showToast("Ingrese un porcentaje de aumento válido.", true); return; }
+
+                const productsToUpdate = localInventory.filter(p => p.category === category);
+                if (productsToUpdate.length === 0) { showToast(`No hay productos en la categoría "${category}" para actualizar.`, true); return; }
+
+                const confirmed = await showModal("Confirmar Aumento", `¿Aumentar ${percentage}% a ${productsToUpdate.length} productos de la categoría "${category}"?`);
+                if (confirmed) {
+                    productsToUpdate.forEach(p => {
+                        p.price = roundPrice(p.price * (1 + percentage / 100));
+                        syncDebtorPrices(p.id, p.price);
+                    });
+                    saveInventory();
+                    loadInventory();
+                    this.render();
+                    updateProductSelects();
+                    showToast(`Precios de la categoría "${category}" actualizados +${percentage}%.`);
+                    document.getElementById('percentage-increase').value = '';
+                }
+            },
+            setupDragAndDrop() {
+                const lists = document.querySelectorAll('.inventory-list');
+                let draggedItem = null;
+                lists.forEach(list => {
+                    list.addEventListener('dragstart', e => { draggedItem = e.target; setTimeout(() => e.target.classList.add('dragging'), 0); });
+                    list.addEventListener('dragend', e => { if (draggedItem) { draggedItem.classList.remove('dragging'); } draggedItem = null; });
+                    list.addEventListener('dragover', e => { e.preventDefault(); });
+                    list.addEventListener('drop', e => {
+                        e.preventDefault();
+                        if (draggedItem && e.currentTarget !== draggedItem.parentNode) {
+                            const productId = draggedItem.dataset.id;
+                            const product = localInventory.find(p => p.id === productId);
+                            if (product) {
+                                const newCategory = e.currentTarget.id === 'inventory-list-verduleria' ? 'Verduleria' : 'General';
+                                product.category = newCategory;
+                                saveInventory();
+                                e.currentTarget.appendChild(draggedItem);
+                                showToast(`"${product.name}" movido a ${newCategory}.`);
+                            }
+                        }
+                    });
+                });
+            },
+            setupBarcodeHandling() {
+                const input = document.getElementById('barcode-input');
+                const addBtn = document.getElementById('barcode-add-btn');
+                const addBarcode = () => {
+                    const code = input.value.trim();
+                    if (code && !tempBarcodes.includes(code)) {
+                        tempBarcodes.push(code);
+                        this.renderBarcodeList();
+                    }
+                    input.value = '';
+                    input.focus();
+                };
+                input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addBarcode(); } });
+                addBtn.addEventListener('click', addBarcode);
+            },
+            renderBarcodeList() {
+                const listEl = document.getElementById('barcode-list');
+                listEl.innerHTML = '';
+                if (tempBarcodes.length === 0) {
+                    listEl.innerHTML = '<li class="text-gray-500 text-sm italic">No hay códigos.</li>';
+                    return;
+                }
+                tempBarcodes.forEach(code => {
+                    const li = document.createElement('li');
+                    li.className = 'flex justify-between items-center text-sm';
+                    li.innerHTML = `<span>${code}</span><button class="text-red-500 font-bold hover:text-red-700 px-2" data-code="${code}">X</button>`;
+                    li.querySelector('button').addEventListener('click', (e) => { tempBarcodes = tempBarcodes.filter(c => c !== e.currentTarget.dataset.code); this.renderBarcodeList(); });
+                    listEl.appendChild(li);
+                });
+            }
+        };
+
+        function updateProductSelects(filter = '', context = 'all') {
+            const posSelect = document.getElementById('pos-product');
+            const debtorSelect = document.getElementById('debtor-product');
+            const selectsToUpdate = [];
+            if (context === 'all' || context === 'pos') selectsToUpdate.push(posSelect);
+            if (context === 'all' || context === 'debtor') selectsToUpdate.push(debtorSelect);
+
+            document.querySelectorAll('.pos-product').forEach(s => selectsToUpdate.push(s));
+
+            const term = filter.trim().toLowerCase();
+            const filtered = localInventory.filter(p =>
+                p.name.toLowerCase().includes(term) ||
+                (p.brand && p.brand.toLowerCase().includes(term)) ||
+                (p.size && p.size.toLowerCase().includes(term)) ||
+                (p.barcodes && p.barcodes.some(barcode => barcode.includes(term)))
+            );
+
+            selectsToUpdate.forEach(select => {
+                if (!select) return;
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Seleccione...</option>';
+
+                if (filtered.length === 0 && term) {
+                    select.innerHTML = '<option value="" disabled>No se encontraron productos</option>';
+                    return;
+                }
+
+                filtered.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    const details = [p.brand, p.size].filter(Boolean).join(' ');
+                    opt.textContent = `${p.name} ${details ? `(${details})` : ''} - $${formatNumber(p.price)}${p.type === 'Kilo' ? '/kg' : ''}`;
+                    opt.dataset.type = p.type;
+                    select.appendChild(opt);
+                });
+
+                if (filtered.some(p => p.id === currentValue)) {
+                    select.value = currentValue;
+                } else if (filtered.length === 1 && term) {
+                    select.value = filtered[0].id;
+                    select.dispatchEvent(new Event('change'));
+                } else {
+                    select.value = '';
+                }
+            });
+        }
+        function updatePosDebtorSelect() {
+            const select = document.getElementById('pos-debtor-select');
+            if (!select) return; 
+            const currentValue = select.value; 
+            select.innerHTML = `<option value="">Seleccionar...</option>`; 
+            currentDebtors.forEach(d => { 
+                const opt = document.createElement('option'); 
+                opt.value = d.id; 
+                opt.textContent = d.name; 
+                select.appendChild(opt); 
+            }); 
+            select.value = currentValue;
+        }
+       
+        function setPaymentMethodUI(containerOrId, selectedMethod) {
+            const container = typeof containerOrId === 'string' ? document.getElementById(containerOrId) : containerOrId;
+            if (!container) return;
+            const buttons = container.querySelectorAll('.payment-method-btn');
+            buttons.forEach(btn => {
+                if (btn.dataset.method === selectedMethod) {
+                    btn.classList.add('type-btn-active');
+                    btn.classList.remove('type-btn-inactive');
+                } else {
+                    btn.classList.remove('type-btn-active');
+                    btn.classList.add('type-btn-inactive');
+                }
+            });
+        }
+
+        function setupPOS() { /* This function's content has been integrated or is handled by renderSaleList now */ }
+
+        function addPOSToSale(saleIndex, productId = null, quantity = null, saleType = null) {
+            const isScan = productId !== null;
+            const viewContainer = document.getElementById('view-vender');
+            if (!viewContainer) return;
+
+            const prodSelect = viewContainer.querySelector('.pos-product');
+            const quantInput = viewContainer.querySelector('.pos-quantity');
+            const searchInput = viewContainer.querySelector('.pos-search');
+
+            const prodId = isScan ? productId : (prodSelect ? prodSelect.value : '');
+            let qty = isScan ? quantity : (quantInput ? parseFloat(quantInput.value) : 0);
+            
+            if (!prodId) { showToast("Seleccione un producto.", true); return; }
+            if (isNaN(qty) || qty <= 0) { showToast("Cantidad inválida.", true); return; } 
+            
+            const product = localInventory.find(p => p.id === prodId); 
+            if (!product) { showToast("Producto no encontrado.", true); return; } 
+            
+            let type = product.type;
+
+            if (isScan) {
+                type = saleType;
+            } else if (prodSelect.options[prodSelect.selectedIndex]) { // This part seems redundant now
+                const selectedOption = prodSelect.options[prodSelect.selectedIndex];
+                type = selectedOption?.dataset.type === 'Kilo' ? 'Peso' : 'Unidad';
+            }
+
+            if (!isScan) {
+                if (product.type !== 'Kilo' && type === 'Peso') { showToast("Este producto se vende por unidad.", true); return; } 
+                if (product.type === 'Kilo' && type === 'Unidad') { showToast("Este producto se vende por peso.", true); return; } 
+            }
+            
+            const activeSale = posSales[saleIndex]; // Use saleIndex
+            if (product.type === 'Unidad') { 
+                qty = Math.floor(qty); 
+                const existingItem = activeSale.items.find(i => i.productId === prodId && i.type === 'Unidad'); 
+                if (existingItem) { 
+                    existingItem.quantity += qty; 
+                    existingItem.price = roundPrice(product.price * existingItem.quantity); 
+                } else { 
+                    activeSale.items.push({ id: generateId(), productId: product.id, name: product.name, brand: product.brand, unitPrice: product.price, quantity: qty, type: 'Unidad', price: roundPrice(product.price * qty) }); 
+                } 
+            } else {
+                const pricePerGram = product.price / 1000; 
+                const price = roundPrice(pricePerGram * qty); 
+                activeSale.items.push({ id: generateId(), productId: product.id, name: product.name, brand: product.brand, unitPrice: pricePerGram, quantity: qty, type: type, price: price }); 
+            } 
+            
+            savePosSales(); 
+            renderSaleList();
+            updateSaleTotal(saleIndex);
+
+            if (prodSelect) prodSelect.value = '';
+            if (quantInput) quantInput.value = '1';
+            if (searchInput) {
+                searchInput.value = '';
+                updateProductSelects('', 'pos');
+            }
+        }
+
+        function renderSaleList() {
+            const col1 = document.getElementById('pos-col-1');
+            const col2 = document.getElementById('pos-col-2');
+            const template = document.getElementById('pos-order-template');
+            if (!col1 || !col2 || !template || col1.offsetParent === null) return;
+            
+            // Render Tabs
+            const tabsContainer = document.getElementById('pos-tabs');
+            tabsContainer.innerHTML = '';
+            posSales.forEach((_, saleIndex) => {
+                const tab = document.createElement('button');
+                tab.className = `pos-tab-btn py-2 px-4 text-sm font-medium border-b-2 -mb-px`;
+                if (saleIndex === activePosSaleIndex) {
+                    tab.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                } else {
+                    tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'dark:text-gray-400', 'dark:hover:text-gray-300', 'dark:hover:border-gray-600');
+                }
+                tab.textContent = `Pedido ${saleIndex + 1}`;
+                tab.dataset.index = saleIndex;
+                tab.addEventListener('click', () => {
+                    activePosSaleIndex = saleIndex;
+                    localStorage.setItem('loDeMari_activePosSaleIndex', saleIndex);
+                    renderSaleList();
+                });
+                tabsContainer.appendChild(tab);
+            });
+
+            // Render Active Sale Card
+            col1.innerHTML = '';
+            col2.innerHTML = '';
+
+            const mainContainer = document.querySelector('#view-vender .pos-order-card');
+            if (mainContainer) mainContainer.dataset.index = activePosSaleIndex;
+
+            const sale = posSales[activePosSaleIndex];
+            if (sale) {
+                const card = template.content.cloneNode(true).firstElementChild;
+                card.dataset.index = activePosSaleIndex;
+                const listEl = card.querySelector('.pos-item-list');
+
+                sale.items.forEach((item, index) => {
+                        const li = document.createElement('li');
+                        li.className = "flex items-center bg-gray-50 dark:bg-gray-700/50 p-1 rounded-md text-sm";
+                        const removeBtnHTML = `<button class="pos-remove-item text-red-500 hover:text-red-700 opacity-50 hover:opacity-100" data-id="${item.id}"><svg class="h-4 w-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>`;
+                        let controlsHTML = (item.type === 'Unidad') ? `
+                            <div class="flex items-center space-x-1.5">
+                                <button class="pos-adjust-qty text-blue-500" data-id="${item.id}" data-amount="-1"><svg class="h-4 w-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg></button>
+                                <span class="font-medium w-6 text-center">${item.quantity}x</span>
+                                <button class="pos-adjust-qty text-blue-500" data-id="${item.id}" data-amount="1"><svg class="h-4 w-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg></button>
+                                <div class="border-l border-gray-300 dark:border-gray-600 h-5 mx-1"></div>
+                                ${removeBtnHTML}
+                            </div>` : removeBtnHTML;
+                        const brandText = item.brand ? `<span class="text-xs text-gray-500 dark:text-gray-400">(${item.brand})</span>` : '';
+                        li.innerHTML = `
+                            <span class="font-medium text-gray-500 dark:text-gray-400 w-5 text-center">${index + 1}.</span>
+                            <div class="flex-grow"><p>${item.name} ${brandText}</p><p class="text-xs text-gray-500 dark:text-gray-400">${item.type === 'Peso' ? item.quantity + 'gr' : ''}</p></div>
+                            <span class="font-medium mx-2">$${formatNumber(item.price)}</span>
+                            <div class="flex-shrink-0">${controlsHTML}</div>`;
+                        listEl.appendChild(li);
+                });
+
+                if (listEl.children.length === 0) {
+                    listEl.innerHTML = `<li class="text-center text-gray-500 dark:text-gray-400 italic text-xs py-4">Pedido vacío</li>`;
+                }
+
+                const searchInput = card.querySelector('.pos-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        updateProductSelects(e.target.value, 'pos');
+                        localStorage.setItem(APP_STATE_PREFIX + `pos-search-${activePosSaleIndex}`, e.target.value);
+                    });
+                }
+                const productSelect = card.querySelector('.pos-product');
+                productSelect.addEventListener('change', (e) => {
+                    const selectedOption = e.target.options[e.target.selectedIndex];
+                    const quantityInput = card.querySelector('.pos-quantity');
+                    if (selectedOption && selectedOption.dataset.type === 'Kilo') {
+                        quantityInput.value = 100;
+                    } else {
+                        quantityInput.value = 1;
+                    }
+                });
+                card.querySelector('.pos-add-item').addEventListener('click', (e) => { e.stopPropagation(); addPOSToSale(activePosSaleIndex); });
+                card.querySelectorAll('.pos-adjust-qty').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); adjustPOSItemQuantity(e.currentTarget.dataset.id, parseInt(e.currentTarget.dataset.amount), activePosSaleIndex); }));
+                card.querySelectorAll('.pos-remove-item').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); posSales[activePosSaleIndex].items = posSales[activePosSaleIndex].items.filter(i => i.id !== e.currentTarget.dataset.id); savePosSales(); renderSaleList(); updateSaleTotal(activePosSaleIndex); }));
+                card.querySelector('.pos-cobrar-btn').addEventListener('click', (e) => { e.stopPropagation(); confirmSale(activePosSaleIndex); });
+                card.querySelector('.pos-pending-btn').addEventListener('click', (e) => { e.stopPropagation(); moveToPending(activePosSaleIndex); });
+                card.querySelector('.pos-send-to-debtor').addEventListener('click', (e) => { e.stopPropagation(); sendSaleToDebtor(activePosSaleIndex); });
+                card.querySelector('.pos-debtor-select').addEventListener('change', (e) => { posSales[activePosSaleIndex].debtorId = e.target.value; savePosSales(); });
+                card.querySelector('.pos-payment-methods').addEventListener('click', (e) => { const btn = e.target.closest('.payment-method-btn'); if (!btn) return; posSales[activePosSaleIndex].paymentMethod = btn.dataset.method; setPaymentMethodUI(e.currentTarget, btn.dataset.method); savePosSales(); });
+                
+                const searcherCard = card.children[0];
+                const itemListCard = card.children[1];
+                const actionsCard = card.children[2];
+
+                col1.appendChild(searcherCard);
+                col1.appendChild(actionsCard);
+                col2.appendChild(itemListCard);
+
+                updateSaleTotal(activePosSaleIndex);
+                
+                const debtorSelect = actionsCard.querySelector('.pos-debtor-select');
+                if (debtorSelect) {
+                    debtorSelect.innerHTML = '<option value="">Seleccionar...</option>';
+                    currentDebtors.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.id;
+                        opt.textContent = d.name;
+                        debtorSelect.appendChild(opt);
+                    });
+                    debtorSelect.value = sale.debtorId || '';
+                }
+
+                setPaymentMethodUI(actionsCard.querySelector('.pos-payment-methods'), sale.paymentMethod || 'Efectivo');
+                updateProductSelects(searcherCard.querySelector('.pos-search').value || '', 'pos');
+            }
+        }
+        function adjustPOSItemQuantity(itemId, amount, saleIndex) { 
+            const activeSaleItems = posSales[saleIndex].items; 
+            const item = activeSaleItems.find(it => it.id === itemId); 
+            if (!item || item.type !== 'Unidad') return; 
+            item.quantity += amount; 
+            if (item.quantity <= 0) { 
+                posSales[saleIndex].items = activeSaleItems.filter(it => it.id !== itemId); 
+            } else { 
+                item.price = roundPrice(item.unitPrice * item.quantity); 
+            } 
+            savePosSales(); 
+            renderSaleList(); 
+            updateSaleTotal(saleIndex);
+        }
+        function updateSaleTotal(saleIndex) { 
+            const saleToUpdate = posSales[saleIndex];
+            if (!saleToUpdate) return 0;
+            const total = saleToUpdate.items.reduce((acc, item) => acc + item.price, 0);
+            const totalEl = document.querySelector(`#view-vender .pos-total-price`);
+            if (totalEl) totalEl.textContent = `$${formatNumber(total)}`;
+            return total;
+        }
+        function clearPosSaleOnly(saleIndex) { 
+            posSales[saleIndex] = { items: [], debtorId: '', paymentMethod: 'Efectivo' }; 
+            savePosSales(); 
+            renderSaleList(); 
+            updateSaleTotal(saleIndex); 
+        }
+
+        function moveToPending(saleIndex) {
+            const sale = posSales[saleIndex];
+            const total = updateSaleTotal(saleIndex);
+            if (total <= 0) { showToast("El pedido está vacío.", true); return; }
+            
+            const pendingSale = {
+                id: generateId(),
+                items: [...sale.items],
+                total: total,
+                timestamp: new Date().toISOString(),
+                debtorId: sale.debtorId,
+                paymentMethod: sale.paymentMethod
+            };
+            
+            if (!Array.isArray(pendingPayments)) pendingPayments = [];
+            pendingPayments.unshift(pendingSale);
+            savePendingPayments();
+            clearPosSaleOnly(saleIndex);
+            renderPendingSales();
+            showToast("Pedido guardado en Pendientes.");
+        }
+
+        function renderPendingSales() {
+            const container = document.getElementById('pending-sales-section');
+            const list = document.getElementById('pending-sales-list');
+            if (!container || !list) return;
+
+            list.innerHTML = '';
+
+            if (!Array.isArray(pendingPayments)) pendingPayments = [];
+            if (pendingPayments.length === 0) {
+                list.innerHTML = '<li class="text-gray-500 dark:text-gray-400 text-center italic text-sm py-4">No hay pagos pendientes.</li>';
+                return;
+            }
+
+            pendingPayments.forEach(sale => {
+                const li = document.createElement('li');
+                li.className = "bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg flex justify-between items-center";
+                li.innerHTML = `
+                    <div>
+                        <p class="font-bold text-lg text-yellow-600 dark:text-yellow-500">$${formatNumber(sale.total)}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">${new Date(sale.timestamp).toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'})} - ${new Date(sale.timestamp).toLocaleDateString('es-AR')}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 truncate w-40">${sale.items.map(i => i.name).join(', ')}</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="resume-pending-btn bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg" data-id="${sale.id}" title="Retomar / Cobrar">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </button>
+                        <button class="delete-pending-list-btn text-red-500 hover:text-red-700 p-2" data-id="${sale.id}" title="Borrar">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>`;
+                list.appendChild(li);
+            });
+
+            list.querySelectorAll('.resume-pending-btn').forEach(btn => btn.addEventListener('click', (e) => resumePendingSale(e.currentTarget.dataset.id)));
+            list.querySelectorAll('.delete-pending-list-btn').forEach(btn => btn.addEventListener('click', async (e) => {
+                const id = e.currentTarget.dataset.id;
+                const conf = await showModal("Confirmar Borrado", "¿Borrar esta venta pendiente?");
+                if (conf) {
+                    pendingPayments = pendingPayments.filter(p => p.id !== id);
+                    savePendingPayments();
+                    renderPendingSales();
+                    showToast("Venta pendiente borrada.");
+                }
+            }));
+        }
+
+        async function resumePendingSale(id) {
+            const index = pendingPayments.findIndex(p => p.id === id);
+            if (index === -1) return;
+            const pendingSale = pendingPayments[index];
+            
+            let targetIndex = posSales.findIndex(s => s.items.length === 0);
+            if (targetIndex === -1) targetIndex = activePosSaleIndex;
+            
+            if (posSales[targetIndex].items.length > 0) {
+                const conf = await showModal("Pestaña ocupada", "La pestaña actual no está vacía. ¿Sobrescribir con el pedido pendiente?");
+                if (!conf) return;
+            }
+            
+            posSales[targetIndex] = {
+                items: [...pendingSale.items],
+                debtorId: pendingSale.debtorId || '',
+                paymentMethod: pendingSale.paymentMethod || 'Efectivo'
+            };
+            
+            activePosSaleIndex = targetIndex;
+            localStorage.setItem('loDeMari_activePosSaleIndex', targetIndex);
+            
+            pendingPayments.splice(index, 1);
+            savePendingPayments();
+            savePosSales();
+            
+            renderSaleList();
+            renderPendingSales();
+            
+            document.getElementById('view-vender').scrollIntoView({ behavior: 'smooth' });
+            showToast("Pedido retomado.");
+        }
+
+        function confirmSale(saleIndex) {
+            const activeSale = posSales[saleIndex];
+            const totalSaleAmount = updateSaleTotal(saleIndex);
+            if (totalSaleAmount <= 0) { showToast("Agregue items a la venta.", true); return; }
+
+            const modal = document.getElementById('split-payment-modal');
+            const totalEl = document.getElementById('split-total-amount');
+            const remainingEl = document.getElementById('split-remaining');
+            const confirmBtn = document.getElementById('split-confirm-btn');
+            const remainingLabel = document.getElementById('split-remaining-label');
+            const inputs = {
+                Efectivo: document.getElementById('split-efectivo'),
+                Transferencia: document.getElementById('split-transferencia'),
+                Posnet: document.getElementById('split-posnet')
+            };
+            const toDebtorSection = document.getElementById('split-to-debtor-section');
+            const debtorSelect = document.getElementById('split-debtor-select');
+            const sendToDebtorBtn = document.getElementById('split-send-to-debtor-btn');
+
+            debtorSelect.innerHTML = '<option value="">Seleccionar deudor...</option>';
+            currentDebtors.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = d.name;
+                debtorSelect.appendChild(opt);
+            });
+
+            function updateRemaining() {
+                const paid = Object.values(inputs).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+                const difference = paid - totalSaleAmount;
+                if (difference >= -0.01) {
+                    remainingLabel.textContent = "Vuelto:";
+                    remainingEl.textContent = `$${formatNumber(difference)}`;
+                    remainingEl.classList.remove('text-red-600', 'dark:text-red-400');
+                    remainingEl.classList.add('text-green-600', 'dark:text-green-400');
+                } else { 
+                    remainingLabel.textContent = "Falta por cubrir:";
+                    remainingEl.textContent = `$${formatNumber(Math.abs(difference))}`;
+                    remainingEl.classList.remove('text-green-600', 'dark:text-green-400');
+                    remainingEl.classList.add('text-red-600', 'dark:text-red-400');
+                }
+
+                toDebtorSection.classList.toggle('hidden', difference >= -0.01);
+                sendToDebtorBtn.disabled = difference >= -0.01 || debtorSelect.value === '';
+                confirmBtn.disabled = difference < -0.01;
+            }
+
+            Object.values(inputs).forEach(input => input.value = '');
+            
+            const currentMethod = activeSale.paymentMethod || 'Efectivo';
+            if (inputs[currentMethod]) {
+                inputs[currentMethod].value = totalSaleAmount;
+            }
+
+            totalEl.textContent = `$${formatNumber(totalSaleAmount)}`;
+            debtorSelect.value = '';
+
+            document.querySelectorAll('.split-input').forEach(input => input.oninput = updateRemaining);
+            document.getElementById('split-cancel-btn').onclick = () => modal.classList.add('hidden');
+            confirmBtn.onclick = () => {
+                try {
+                    const todayStr = getYearMonthDay(new Date());
+                    if (!dailyEarnings[todayStr]) dailyEarnings[todayStr] = { pendingSales: [] };
+                    if (!dailyEarnings[todayStr].pendingSales) dailyEarnings[todayStr].pendingSales = [];
+                    const items = activeSale.items.map(item => ({ productId: item.productId, price: item.price, quantity: item.quantity, name: item.name, type: item.type }));
+                    let finalSaleTotal = 0;
+                    const paymentMethodsSummary = {};
+
+                    Object.entries(inputs).forEach(([method, input]) => {
+                        let amount = parseFloat(input.value) || 0;
+                        if (amount > 0) { 
+                            dailyEarnings[todayStr].pendingSales.push({ id: generateId(), amount: amount, timestamp: new Date().toISOString(), items: items, paymentMethod: method }); 
+                            finalSaleTotal += amount; 
+                            paymentMethodsSummary[method] = amount;
+                        }
+                    });
+
+                    if (finalSaleTotal > 0) {
+                        const historyRecord = { id: generateId(), timestamp: new Date().toISOString(), items: items, totalAmount: finalSaleTotal, paymentMethods: paymentMethodsSummary, type: 'Venta Directa' };
+                        salesHistory.unshift(historyRecord);
+                        saveSalesHistory();
+                    }
+
+                    saveDailyEarnings(); 
+                    showToast(`Venta de $${formatNumber(finalSaleTotal)} registrada.`); 
+                    clearPosSaleOnly(saleIndex); 
+                    updateCierreCajaView(); 
+                } catch (e) {
+                    console.error("Error al confirmar venta:", e);
+                    showToast("Error al registrar venta. Verifique consola.", true);
+                }
+                modal.classList.add('hidden');
+            };
+            
+            debtorSelect.onchange = updateRemaining;
+
+            sendToDebtorBtn.onclick = () => {
+                const debtorId = debtorSelect.value;
+                if (!debtorId) { showToast("Seleccione un deudor para enviar el restante.", true); return; }
+                const debtor = currentDebtors.find(d => d.id === debtorId);
+                if (!debtor) { showToast("Deudor no encontrado.", true); return; }
+
+                const paidAmount = Object.values(inputs).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0); const remainingDebt = totalSaleAmount - paidAmount; if (paidAmount > 0) { const todayStr = getYearMonthDay(new Date());
+                    const paymentMethodsSummary = {};
+                    if (!dailyEarnings[todayStr]) dailyEarnings[todayStr] = { pendingSales: [] };
+                    Object.entries(inputs).forEach(([method, input]) => {
+                        const amount = parseFloat(input.value) || 0;
+                        if (amount > 0) { 
+                            dailyEarnings[todayStr].pendingSales.push({ id: generateId(), amount: amount, timestamp: new Date().toISOString(), items: [], paymentMethod: method });
+                            paymentMethodsSummary[method] = amount;
+                        }
+                    });
+                    saveDailyEarnings();
+
+                    const itemsForHistory = activeSale.items.map(item => ({ productId: item.productId, price: item.price, quantity: item.quantity, name: item.name, type: item.type }));
+                    const historyRecord = { id: generateId(), timestamp: new Date().toISOString(), items: itemsForHistory, totalAmount: paidAmount, paymentMethods: paymentMethodsSummary, type: 'Pago Parcial', notes: `Resto $${formatNumber(remainingDebt)} a ${debtor.name}` };
+                    salesHistory.unshift(historyRecord);
+                    saveSalesHistory();
+
+                    showToast(`Pago parcial de $${formatNumber(paidAmount)} registrado.`);
+                }
+
+                let cumulativeDebtItem = debtor.items.find(i => i.productId === CUMULATIVE_DEBT_ID);
+                if (cumulativeDebtItem) {
+                    cumulativeDebtItem.quantity = roundPrice(cumulativeDebtItem.quantity + remainingDebt);
+                } else {
+                    debtor.items.push({ id: generateId(), productId: CUMULATIVE_DEBT_ID, name: 'Fiado Acumulado', quantity: roundPrice(remainingDebt), type: 'Unidad', addedAt: new Date().toISOString() });
+                }
+                saveDebtors(); // Guardar y actualizar el total general.
+                calculateAllDebtorsTotal();
+                showToast(`$${formatNumber(remainingDebt)} sumado al fiado de ${debtor.name}.`);
+
+                clearPosSaleOnly(saleIndex);
+                updateCierreCajaView();
+                modal.classList.add('hidden');
+            };
+
+            modal.classList.remove('hidden');
+            updateRemaining();
+        }
+        function sendSaleToDebtor(saleIndex) {
+            const activeSale = posSales[saleIndex];
+            const debtorId = activeSale.debtorId; const totalSaleAmount = updateSaleTotal(saleIndex);
+
+            if (!debtorId) { showToast("Seleccione un deudor.", true); return; }
+            if (activeSale.items.length === 0) { showToast("Agregue items a la venta.", true); return; }
+
+            const debtor = currentDebtors.find(d => d.id === debtorId);
+            if (!debtor) { showToast("Deudor no encontrado.", true); return; }
+
+            activeSale.items.forEach(item => {
+                const product = localInventory.find(p => p.id === item.productId);
+                const newItem = { id: generateId(), productId: item.productId, quantity: item.quantity, type: item.type, addedAt: new Date().toISOString(), lockedPrice: product ? product.price : item.price };
+                debtor.items.push(newItem);
+            });
+
+            const itemsForHistory = activeSale.items.map(item => ({ productId: item.productId, price: item.price, quantity: item.quantity, name: item.name, type: item.type }));
+            const historyRecord = { id: generateId(), timestamp: new Date().toISOString(), items: itemsForHistory, totalAmount: totalSaleAmount, paymentMethods: { Deudor: totalSaleAmount }, type: 'Enviado a Deudor', notes: `A cuenta de ${debtor.name}` };
+            salesHistory.unshift(historyRecord);
+
+            // Registrar la venta a deudor en las ganancias diarias para el resumen de verdulería
+            activeSale.items.forEach(item => {
+                const product = localInventory.find(p => p.id === item.productId);
+                if (product && product.category === 'Verduleria') {
+                    const todayStr = getYearMonthDay(new Date());
+                    if (!dailyEarnings[todayStr]) dailyEarnings[todayStr] = { debtorSales: [] };
+                    if (!dailyEarnings[todayStr].debtorSales) dailyEarnings[todayStr].debtorSales = [];
+                    dailyEarnings[todayStr].debtorSales.push({ id: generateId(), items: [item], debtorId: debtorId, timestamp: new Date().toISOString() });
+                }
+            });
+
+            saveDailyEarnings();
+            saveSalesHistory();
+            saveDebtors();
+            loadDebtors();
+            showToast(`Venta de $${formatNumber(totalSaleAmount)} enviada a la cuenta de ${debtor.name}.`);
+            
+            if (currentDebtorId === debtorId) {
+                renderDebtorItemList(); 
+                calculateDebtorTotal();
+            }
+            clearPosSaleOnly(saleIndex);
+        }
+
+        function setupDebtors() {
+            document.getElementById('add-debtor-form').addEventListener('submit', (e) => { e.preventDefault(); const nameInput = document.getElementById('debtor-name'); const name = nameInput.value.trim(); if (name) { const id = name.toLowerCase().replace(/\s+/g, '-'); if (currentDebtors.find(d => d.id === id)) { showToast("Deudor ya existe.", true); return; } currentDebtors.push({ id: id, name: name, items: [], saldoFavor: 0, history: [], savedDebts: [] }); saveDebtors(); loadDebtors(); renderDebtorList(document.getElementById('debtor-search')?.value || ''); updatePosDebtorSelect(); showToast("Deudor agregado."); nameInput.value = ''; } });
+            document.getElementById('debtor-add-item').addEventListener('click', addItemToDebtor);
+            document.getElementById('debtor-charge-all').addEventListener('click', showDebtorPaymentModal);
+            document.getElementById('clear-saldo-favor-btn').addEventListener('click', clearSaldoFavor);
+            document.getElementById('debtor-save-debt').addEventListener('click', saveCurrentDebt);
+            document.getElementById('debtor-account-search').addEventListener('input', renderDebtorItemList);
+
+            document.getElementById('debtor-product').addEventListener('change', (e) => {
+                const quantLabel = document.getElementById('debtor-quantity-label');
+                const quantInput = document.getElementById('debtor-quantity');
+                const selectedOption = e.target.options[e.target.selectedIndex];
+                const isPeso = selectedOption && selectedOption.dataset.type === 'Kilo';
+                quantLabel.textContent = isPeso ? "Peso (gr)" : "Cantidad";
+                quantInput.step = isPeso ? 10 : 1;
+                quantInput.value = isPeso ? 100 : 1;
+                handleDebtorProductChange(selectedOption);
+            });
+        }
+        function renderDebtorList(filter = '') { 
+            calculateAllDebtorsTotal();
+            const list = document.getElementById('debtor-list'); list.innerHTML = ''; const term = filter.trim().toLowerCase(); const filtered = currentDebtors.filter(d => d.name.toLowerCase().includes(term)); calculateAllDebtorsTotal();
+            if (filtered.length === 0) { list.innerHTML = `<li class="text-gray-500 dark:text-gray-400 text-sm p-2">No se encontraron deudores ${term ? 'con ese filtro' : ''}.</li>`; return; }
+            filtered.forEach(d => { const li = document.createElement('li'); li.className = `flex justify-between items-center p-3 rounded-lg cursor-pointer ${currentDebtorId === d.id ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'}`; li.innerHTML = `<span class="font-medium">${d.name}</span><button class="delete-debtor-btn text-red-500 hover:text-red-700 delete-list-item-btn" data-id="${d.id}" data-name="${d.name}"><svg class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`; li.addEventListener('click', (e) => { if (!e.target.closest('.delete-debtor-btn')) { showDebtorDetails(d.id); } }); li.querySelector('.delete-debtor-btn').addEventListener('click', async (e) => { e.stopPropagation(); const id = e.currentTarget.dataset.id, name = e.currentTarget.dataset.name; const conf = await showModal("Confirmar Borrado", `Borrar a "${name}"?`); if (conf) { currentDebtors = currentDebtors.filter(db => db.id !== id); saveDebtors(); loadDebtors(); showToast("Deudor borrado."); if (currentDebtorId === id) { showDebtorDetails(null); } renderDebtorList(document.getElementById('debtor-search')?.value || ''); updatePosDebtorSelect(); } }); list.appendChild(li); });
+        }
+        function showDebtorDetails(id) {
+            const panel = document.getElementById('debtor-details-panel'), placeholder = document.getElementById('debtor-details-placeholder'); if (!id) { currentDebtorId = null; currentDebtorData = null; panel.classList.add('hidden'); placeholder.classList.remove('hidden'); renderDebtorList(document.getElementById('debtor-search')?.value || ''); return; } currentDebtorId = id; currentDebtorData = currentDebtors.find(d => d.id === id); if (currentDebtorData) { document.getElementById('debtor-detail-name').textContent = currentDebtorData.name; renderDebtorItemList(); calculateDebtorTotal(); panel.classList.remove('hidden'); placeholder.classList.add('hidden'); } else { showDebtorDetails(null); } renderDebtorList(document.getElementById('debtor-search')?.value || '');
+        }
+
+        function handleDebtorProductChange(selectedOption) {
+            const quantLabel = document.getElementById('debtor-quantity-label');
+            const quantInput = document.getElementById('debtor-quantity');
+            const isPeso = selectedOption && selectedOption.dataset.type === 'Kilo';
+            quantLabel.textContent = isPeso ? "Peso (gr)" : "Cantidad";
+            quantInput.step = isPeso ? 10 : 1;
+            quantInput.value = isPeso ? 100 : 1;
+        }
+
+        function addItemToDebtor(event, productId = null, qty = null) {
+            const isScan = productId !== null;
+            const prodId = isScan ? productId : document.getElementById('debtor-product').value;
+            const quantInput = document.getElementById('debtor-quantity');
+            const quantity = isScan ? qty : parseFloat(quantInput.value);
+
+            if (!currentDebtorId || !prodId || isNaN(quantity) || quantity <= 0) { showToast("Faltan datos.", true); return; } 
+            const product = localInventory.find(p => p.id === prodId); 
+            if (!product) { showToast("Producto no encontrado.", true); return; } 
+            const itemType = product.type === 'Kilo' ? 'Peso' : 'Unidad'; 
+            if (product.type === 'Unidad' && !Number.isInteger(quantity)) { showToast("Cantidad para producto por unidad debe ser un número entero.", true); return; }
+            
+            const saleRecordId = generateId();
+            const existingItem = currentDebtorData.items.find(i => i.productId === prodId && i.type === itemType);
+            
+            const newItem = { id: generateId(), productId: prodId, quantity: quantity, type: itemType, addedAt: new Date().toISOString(), saleRecordId: saleRecordId, lockedPrice: product.price };
+            currentDebtorData.items.push(newItem);
+            const pricePerGram = product.price / 1000;
+            const itemPrice = itemType === 'Unidad' ? roundPrice(product.price * quantity) : roundPrice(pricePerGram * quantity);
+            // Solo registrar la venta si el producto es de verdulería
+            const todayStr = getYearMonthDay(new Date());
+            if (product.category === 'Verduleria') {
+                if (!dailyEarnings[todayStr]) dailyEarnings[todayStr] = { pendingSales: [] };
+                if (!dailyEarnings[todayStr].debtorSales) dailyEarnings[todayStr].debtorSales = [];
+                dailyEarnings[todayStr].debtorSales.push({ id: saleRecordId, items: [{ productId: product.id, price: itemPrice, quantity: quantity }], debtorId: currentDebtorId, timestamp: new Date().toISOString() });
+                saveDailyEarnings();
+            }
+            saveDebtors(); renderDebtorItemList(); calculateDebtorTotal(); document.getElementById('debtor-product').value = ''; quantInput.value = 1; document.getElementById('debtor-item-search').value = ''; updateProductSelects('', 'debtor');
+        }
+        function adjustDebtorItemQuantity(itemId, amount) { if (!currentDebtorData) return; const item = currentDebtorData.items.find(it => it.id === itemId); if (!item || item.type !== 'Unidad') return; item.quantity += amount; if (item.quantity <= 0) { currentDebtorData.items = currentDebtorData.items.filter(it => it.id !== itemId); showToast("Item eliminado."); } saveDebtors(); renderDebtorItemList(); calculateDebtorTotal(); }
+        function renderDebtorItemList() {
+            const list = document.getElementById('debtor-item-list'); list.innerHTML = '';
+            const filterTerm = document.getElementById('debtor-account-search')?.value.toLowerCase() || '';
+
+            if (!currentDebtorData || !currentDebtorData.items || currentDebtorData.items.length === 0) { list.innerHTML = `<li class="text-gray-500 dark:text-gray-400 text-sm">Cuenta principal vacía.</li>`; } else { 
+                currentDebtorData.items.sort((a, b) => new Date(a.addedAt) - new Date(b.addedAt));
+                
+                const filteredItems = currentDebtorData.items.filter(item => {
+                    const product = localInventory.find(p => p.id === item.productId);
+                    const pName = product ? product.name : (item.name || '');
+                    return pName.toLowerCase().includes(filterTerm);
+                });
+
+                if (filteredItems.length === 0 && filterTerm) { list.innerHTML = `<li class="text-gray-500 dark:text-gray-400 text-sm">No se encontraron items.</li>`; }
+
+                filteredItems.forEach((item) => {
+                const product = localInventory.find(p => p.id === item.productId);
+                // Si el producto no existe en el inventario, no se puede calcular su precio, así que lo omitimos de la lista visible.
+                // if (!product && item.productId !== 'summary-item' && item.productId !== CUMULATIVE_DEBT_ID) return;
+                const pName = product ? product.name : (item.name || `Producto Eliminado`);
+                const pBrand = product && product.brand ? `(${product.brand})` : '';
+                const pPrice = product ? Math.max(item.lockedPrice || 0, product.price) : 0;
+                const priceText = product ? (item.type === 'Kilo' ? `/kg` : `c/u`) : '';
+                let itemText = '';
+                const li = document.createElement('li');
+                li.className = `flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-2 rounded-lg`;
+                let controlsHTML = '';
+
+                if (item.productId === 'summary-item' || item.productId === CUMULATIVE_DEBT_ID) {
+                    itemText = `${pName}: $${formatNumber(item.quantity)}`;
+                    controlsHTML = `<button class="debtor-remove-item text-red-500 hover:text-red-700 delete-list-item-btn" data-id="${item.id}" data-name="${itemText}"><svg class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+                    li.innerHTML = `<span class="text-sm">${itemText}</span><div class="flex-shrink-0">${controlsHTML}</div>`;
+                } else {
+                    itemText = item.type === 'Peso' ? `${item.quantity}gr ${pName}${pBrand}` : `${item.quantity}x ${pName}${pBrand}`;
+                    const removeBtnHTML = `<button class="debtor-remove-item text-red-500 hover:text-red-700 delete-list-item-btn" data-id="${item.id}"><svg class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+                    if (item.type === 'Unidad') {
+                        controlsHTML = `
+                            <div class="flex items-center space-x-2">
+                                <button class="debtor-adjust-qty text-blue-500" data-id="${item.id}" data-amount="-1"><svg class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg></button>
+                                <span class="font-medium text-sm w-8 text-center">${item.quantity}x</span>
+                                <button class="debtor-adjust-qty text-blue-500" data-id="${item.id}" data-amount="1"><svg class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg></button>
+                                <div class="border-l border-gray-300 dark:border-gray-600 h-6 mx-2"></div>
+                                ${removeBtnHTML}
+                            </div>`;
+                        li.innerHTML = `<span class="text-sm">${itemText} <span class="text-xs text-gray-500 dark:text-gray-400">($${formatNumber(roundPrice(pPrice))} ${priceText})</span></span><div class="flex-shrink-0">${controlsHTML}</div>`;
+                    } else {
+                        const priceDetail = pPrice > 0 ? `<span class="text-xs text-gray-500 dark:text-gray-400">($${formatNumber(pPrice)}/kg)</span>` : '';
+                        li.innerHTML = `<span class="text-sm">${itemText} ${priceDetail}</span><div class="flex-shrink-0">${removeBtnHTML}</div>`;
+                    }
+                }
+                list.appendChild(li);
+            });
+            }
+            list.querySelectorAll('.debtor-adjust-qty').forEach(b => b.addEventListener('click', (e) => { const id = e.currentTarget.dataset.id; const amount = parseInt(e.currentTarget.dataset.amount); adjustDebtorItemQuantity(id, amount); e.stopPropagation(); }));
+            list.querySelectorAll('.debtor-remove-item').forEach(b => b.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id = e.currentTarget.dataset.id;
+                const itemToRemove = currentDebtorData.items.find(it => it.id === id);
+                if (!itemToRemove) return;
+                const product = localInventory.find(p => p.id === itemToRemove.productId);
+                const productName = product ? product.name : (itemToRemove.name || 'Item borrado');
+                const text = itemToRemove.productId === 'summary-item' || itemToRemove.productId === CUMULATIVE_DEBT_ID ? `${productName}: $${formatNumber(itemToRemove.quantity)}` : `${itemToRemove.quantity}${itemToRemove.type === 'Unidad' ? 'x' : 'gr'} ${productName}`;
+                const conf = await showModal("Confirmar Borrado", `¿Seguro que quieres borrar "${text}"?`);
+                if (conf) {
+                    if (itemToRemove.saleRecordId) {
+                        const itemDate = getYearMonthDay(new Date(itemToRemove.addedAt));
+                        if (dailyEarnings[itemDate] && dailyEarnings[itemDate].debtorSales) {
+                            dailyEarnings[itemDate].debtorSales = dailyEarnings[itemDate].debtorSales.filter(s => s.id !== itemToRemove.saleRecordId);
+                            saveDailyEarnings();
+                            if (document.getElementById('view-verduleria').offsetParent !== null) renderVerduleriaSummary(getYearMonth(currentFinanceDate));
+                            showToast("Ítem borrado de la cuenta y del resumen.");
+                        }
+                    } else { showToast("Ítem borrado de la cuenta."); }
+                    currentDebtorData.items = currentDebtorData.items.filter(it => it.id !== id);
+                    saveDebtors();
+                    renderDebtorItemList();
+                    calculateDebtorTotal();
+                }
+            }));
+            renderSavedDebts();
+        }
+        function renderSavedDebts() {
+            const container = document.getElementById('saved-debts-section');
+            container.innerHTML = '';
+            if (!currentDebtorData || !currentDebtorData.savedDebts || currentDebtorData.savedDebts.length === 0) return;
+
+            const title = document.createElement('h4');
+            title.className = 'text-lg font-semibold mb-3';
+            title.textContent = 'Deudas Guardadas';
+            container.appendChild(title);
+
+            currentDebtorData.savedDebts.forEach(savedDebt => {
+                const debtBox = document.createElement('div');
+                debtBox.className = 'bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg mb-4';
+                let itemsHTML = '';
+                savedDebt.items.forEach(item => {
+                    const product = localInventory.find(p => p.id === item.productId);
+                    const pName = product ? product.name : (item.name || 'Item borrado');
+                    const text = item.productId === 'summary-item' || item.productId === CUMULATIVE_DEBT_ID ? `${pName}: $${formatNumber(item.quantity)}` : `${item.quantity}${item.type === 'Unidad' ? 'x' : 'gr'} ${pName}`;
+                    itemsHTML += `<li class="text-sm">${text}</li>`;
+                });
+
+                const savedDebtTotal = calculateDebtorTotal(savedDebt.items);
+                const finalTotal = savedDebtTotal - (savedDebt.saldoFavor || 0);
+
+                debtBox.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h5 class="font-semibold">${savedDebt.name}</h5>
+                            <span class="font-bold text-red-500 dark:text-red-400">$${formatNumber(finalTotal)}</span>
+                        </div>
+                        <button class="delete-saved-debt-btn text-red-500 hover:text-red-700 delete-list-item-btn" data-id="${savedDebt.id}" title="Borrar esta deuda guardada">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        </button>
+                    </div>
+                    <ul class="list-disc list-inside pl-2 mb-3">${itemsHTML}</ul>
+                    ${savedDebt.saldoFavor > 0 ? `<div class="text-sm text-green-600 dark:text-green-400 mb-2">Saldo a favor: $${formatNumber(savedDebt.saldoFavor)}</div>` : ''}
+                    <button class="pay-saved-debt-btn w-full text-sm bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded-lg transition-colors mt-2" data-id="${savedDebt.id}">Pagarla</button>
+                `;
+                container.appendChild(debtBox);
+            });
+
+            container.querySelectorAll('.pay-saved-debt-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const debtId = e.currentTarget.dataset.id;
+                    showSavedDebtPaymentModal(debtId);
+                });
+            });
+            container.querySelectorAll('.delete-saved-debt-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const debtId = e.currentTarget.dataset.id;
+                    if (!currentDebtorData) return;
+                    const debtIndex = currentDebtorData.savedDebts.findIndex(d => d.id === debtId);
+                    if (debtIndex === -1) return;
+
+                    const confirmed = await showModal("Confirmar Borrado", `¿Estás seguro de que quieres borrar esta deuda guardada? Esta acción no se puede deshacer.`);
+                    if (confirmed) {
+                        currentDebtorData.savedDebts.splice(debtIndex, 1);
+                        saveDebtors();
+                        renderDebtorItemList(); // Esto redibuja la lista de deudas guardadas
+                        calculateDebtorTotal(); // Recalcula el total del deudor
+                        showToast("Deuda guardada eliminada.");
+                    }
+                });
+            });
+        }
+        function calculateDebtorTotal(items = null) {
+            if (!currentDebtorData && !items) { document.getElementById('debtor-total-price').textContent = "$0"; return 0; } 
+            let total = 0;
+            const itemsToCalculate = items || currentDebtorData.items;
+            itemsToCalculate.forEach(item => {
+                if (item.productId === 'summary-item' || item.productId === CUMULATIVE_DEBT_ID) {
+                    total += item.quantity;
+                } else {
+                    const product = localInventory.find(p => p.id === item.productId);
+                    if (product) {
+                        const effectivePrice = Math.max(item.lockedPrice || 0, product.price);
+                        if (item.type === 'Unidad') { total += effectivePrice * item.quantity; }
+                        else if (item.type === 'Peso') { total += (effectivePrice / 1000) * item.quantity; }
+                    }
+                }
+            });
+           
+            if (!items) {
+                const saldoContainer = document.getElementById('debtor-saldo-favor-container'), saldoEl = document.getElementById('debtor-saldo-favor-amount');
+                let finalTotal = total;
+                if (currentDebtorData.saldoFavor > 0.01) {
+                    finalTotal -= currentDebtorData.saldoFavor;
+                    saldoEl.textContent = `-$${formatNumber(currentDebtorData.saldoFavor)}`;
+                    saldoContainer.classList.remove('hidden');
+                } else {
+                    saldoContainer.classList.add('hidden');
+                }
+                const roundedTotal = roundPrice(finalTotal);
+                document.getElementById('debtor-total-price').textContent = `$${formatNumber(roundedTotal)}`;
+                return roundedTotal;
+            }
+           
+            return roundPrice(total);
+        }
+        function saveCurrentDebt() {
+            if (!currentDebtorData || currentDebtorData.items.length === 0) { showToast("La cuenta principal está vacía, no hay nada que guardar.", true); return; }
+            const newSavedDebt = { id: generateId(), name: `Deuda guardada el ${new Date().toLocaleDateString('es-AR')}`, items: currentDebtorData.items, saldoFavor: 0 };
+            if (!currentDebtorData.savedDebts) currentDebtorData.savedDebts = [];
+            currentDebtorData.savedDebts.push(newSavedDebt);
+            currentDebtorData.items = [];
+            renderDebtorItemList();
+            calculateDebtorTotal();
+            saveDebtors();
+            showToast("La deuda actual ha sido guardada.");
+        }
+        async function clearSaldoFavor() {
+            if (!currentDebtorData || !(currentDebtorData.saldoFavor > 0)) return;
+            const confirmed = await showModal("Confirmar Borrado", `¿Desea borrar el saldo a favor de $${formatNumber(currentDebtorData.saldoFavor)}?`);
+            if (!confirmed) return;
+            currentDebtorData.saldoFavor = 0; 
+            saveDebtors(); renderDebtorItemList(); calculateDebtorTotal(); showToast("Saldo a favor borrado.");
+        }
+        function showDebtorPaymentModal() {
+            if (!currentDebtorData) { showToast("Seleccione un deudor.", true); return; }
+            const totalDebt = calculateDebtorTotal();
+            if (totalDebt <= 0) { showToast("La cuenta no tiene deuda para saldar.", true); return; }
+            openGenericPaymentModal(totalDebt, (paymentAmount, paymentMethod) => {
+                processDebtorPayment(currentDebtorData, paymentAmount, paymentMethod); // Esto ya guarda y actualiza totales.
+                renderDebtorItemList();
+                calculateDebtorTotal();
+            });
+        }
+        function showSavedDebtPaymentModal(debtId) {
+            if (!currentDebtorData) return;
+            const debtIndex = currentDebtorData.savedDebts.findIndex(d => d.id === debtId);
+            if (debtIndex === -1) return;
+            const savedDebt = currentDebtorData.savedDebts[debtIndex];
+            const debtItemsTotal = calculateDebtorTotal(savedDebt.items);
+            const totalDebt = debtItemsTotal - (savedDebt.saldoFavor || 0);
+            if (totalDebt <= 0) { showToast("Esta deuda guardada no tiene monto para pagar.", true); return; }
+
+            openGenericPaymentModal(totalDebt, (paymentAmount, paymentMethod) => {
+                processDebtorPayment(savedDebt, paymentAmount, paymentMethod);
+                if (savedDebt.items.length === 0) {
+                    currentDebtorData.savedDebts.splice(debtIndex, 1);
+                    currentDebtorData.saldoFavor = (currentDebtorData.saldoFavor || 0) + (savedDebt.saldoFavor || 0);
+                }
+                renderDebtorItemList();
+                calculateDebtorTotal();
+                saveDebtors(); // Guardar cambios después de la operación.
+            });
+        }
+        function getPaymentMethodFromUI(containerId) { 
+            const container = document.getElementById(containerId);
+            const activeButton = container.querySelector('.payment-method-btn.type-btn-active');
+            return activeButton ? activeButton.dataset.method : 'Efectivo';
+        }
+        function openGenericPaymentModal(totalDebt, onConfirm) {
+            const modal = document.getElementById('debtor-payment-modal');
+            document.getElementById('debtor-payment-total-debt').textContent = `$${formatNumber(totalDebt)}`;
+            const amountInput = document.getElementById('debtor-payment-amount-input');
+            amountInput.value = totalDebt;
+
+            setPaymentMethodUI('debtor-payment-methods', 'Efectivo');
+            const paymentMethodHandler = (e) => {
+                const btn = e.target.closest('.payment-method-btn');
+                if (!btn) return;
+                setPaymentMethodUI('debtor-payment-methods', btn.dataset.method);
+            };
+            document.getElementById('debtor-payment-methods').addEventListener('click', paymentMethodHandler);
+
+            const confirmHandler = () => {
+                const paymentAmount = parseFloat(amountInput.value);
+                if (isNaN(paymentAmount) || paymentAmount <= 0) { 
+                    showToast("Monto de pago inválido.", true); 
+                } else { 
+                    onConfirm(paymentAmount, getPaymentMethodFromUI('debtor-payment-methods')); 
+                    cleanup();
+                }
+            };
+            const cancelHandler = () => {
+                cleanup();
+            };
+
+            const cleanup = () => {
+                document.getElementById('debtor-payment-methods').removeEventListener('click', paymentMethodHandler);
+                document.getElementById('debtor-payment-confirm-btn').onclick = null;
+                document.getElementById('debtor-payment-cancel-btn').onclick = null;
+                modal.classList.add('hidden');
+            };
+
+            document.getElementById('debtor-payment-confirm-btn').onclick = confirmHandler;
+            document.getElementById('debtor-payment-cancel-btn').onclick = cancelHandler;
+            modal.classList.remove('hidden');
+        }
+        function processDebtorPayment(debtObject, paymentAmount, paymentMethod) {
+            const todayStr = getYearMonthDay(new Date());
+            if (!dailyEarnings[todayStr]) dailyEarnings[todayStr] = {};
+            if (!dailyEarnings[todayStr].debtorPayments) dailyEarnings[todayStr].debtorPayments = []; 
+            
+            dailyEarnings[todayStr].debtorPayments.push({ id: generateId(), amount: paymentAmount, timestamp: new Date().toISOString(), paymentMethod: paymentMethod });
+            saveDailyEarnings();
+            showToast(`Pago de $${formatNumber(paymentAmount)} registrado.`);
+
+            let availablePayment = paymentAmount + (debtObject.saldoFavor || 0);
+
+            let cumulativeDebtItem = debtObject.items.find(i => i.productId === CUMULATIVE_DEBT_ID);
+            if (cumulativeDebtItem && availablePayment > 0) {
+                if (availablePayment >= cumulativeDebtItem.quantity) {
+                    availablePayment -= cumulativeDebtItem.quantity;
+                    debtObject.items = debtObject.items.filter(i => i.productId !== CUMULATIVE_DEBT_ID);
+                } else {
+                    cumulativeDebtItem.quantity -= availablePayment;
+                    availablePayment = 0;
+                }
+            }
+
+            let payableItems = debtObject.items.map(item => {
+                const product = localInventory.find(p => p.id === item.productId);
+                const price = (item.productId === 'summary-item') ? item.quantity : (product ? (item.type === 'Unidad' ? product.price * item.quantity : (product.price / 1000) * item.quantity) : 0);
+                return { ...item, calculatedPrice: roundPrice(price) };
+            }).filter(item => item.calculatedPrice >= 0 && item.productId !== CUMULATIVE_DEBT_ID).sort((a, b) => b.calculatedPrice - a.calculatedPrice);
+
+            const paidItemIds = new Set();
+            for (const item of payableItems) {
+                if (availablePayment < 0.01 && item.calculatedPrice > 0) break;
+                const originalItem = debtObject.items.find(i => i.id === item.id);
+                if (!originalItem) continue;
+
+                if (availablePayment >= item.calculatedPrice) {
+                    availablePayment -= item.calculatedPrice;
+                    paidItemIds.add(item.id);
+                } else {
+                    const product = localInventory.find(p => p.id === originalItem.productId);
+                    if (originalItem.productId === 'summary-item') {
+                        originalItem.quantity -= availablePayment;
+                        availablePayment = 0;
+                    } else if (product && originalItem.type === 'Unidad' && originalItem.quantity > 1) {
+                        const unitPrice = roundPrice(product.price);
+                        if (unitPrice > 0) {
+                            const unitsToPay = Math.floor(availablePayment / unitPrice);
+                            if (unitsToPay > 0) {
+                                availablePayment -= (unitsToPay * unitPrice);
+                                originalItem.quantity -= unitsToPay;
+                            }
+                        }
+                    }
+                }
+            }
+            debtObject.items = debtObject.items.filter(i => !paidItemIds.has(i.id));
+            debtObject.saldoFavor = availablePayment;
+            
+            if (debtObject.history) {
+                debtObject.history.push({ type: 'payment', date: new Date().toISOString(), amount: paymentAmount });
+            }
+            saveDebtors(); // Guardar y luego actualizar el total general.
+            calculateAllDebtorsTotal();
+        }
+        function calculateAllDebtorsTotal() {
+            let totalDebtOfAll = 0;
+            currentDebtors.forEach(debtor => {
+                let singleDebtorTotal = 0;
+                // Sumar items de la cuenta principal
+                debtor.items.forEach(item => {
+                    const product = localInventory.find(p => p.id === item.productId);
+                    if (item.productId === 'summary-item' || item.productId === CUMULATIVE_DEBT_ID) { singleDebtorTotal += item.quantity; }
+                    else if (product) { singleDebtorTotal += item.type === 'Unidad' ? product.price * item.quantity : (product.price / 1000) * item.quantity; }
+                });
+                // Sumar deudas guardadas
+                (debtor.savedDebts || []).forEach(savedDebt => { singleDebtorTotal += calculateDebtorTotal(savedDebt.items) - (savedDebt.saldoFavor || 0); });
+                totalDebtOfAll += (singleDebtorTotal - (debtor.saldoFavor || 0));
+            }); 
+            // Asegurarse de que el total no sea negativo si hay más saldo a favor que deuda.
+            totalDebtOfAll = Math.max(0, totalDebtOfAll);
+            document.getElementById('all-debtors-total').textContent = `$${formatNumber(roundPrice(totalDebtOfAll))}`;
+        }
+
+        function setupFinanzas() { 
+            document.getElementById('prev-month-finanzas').addEventListener('click', () => changeFinanceMonth(-1)); 
+            document.getElementById('next-month-finanzas').addEventListener('click', () => changeFinanceMonth(1)); 
+            document.getElementById('prev-month-verduleria').addEventListener('click', () => changeFinanceMonth(-1)); 
+            document.getElementById('next-month-verduleria').addEventListener('click', () => changeFinanceMonth(1)); 
+            document.getElementById('add-expense-form').addEventListener('submit', (e) => { e.preventDefault(); addExpense(); }); 
+            document.getElementById('expense-date').value = getYearMonthDay(new Date()); 
+            renderFinanzasView(); 
+        }
+        function changeFinanceMonth(delta) { currentFinanceDate.setMonth(currentFinanceDate.getMonth() + delta); renderFinanzasView(); }
+        function renderFinanzasView() {
+            const yearMonth = getYearMonth(currentFinanceDate);
+            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            document.getElementById('month-year-finanzas').textContent = document.getElementById('month-year-verduleria').textContent = `${months[currentFinanceDate.getMonth()]} ${currentFinanceDate.getFullYear()}`;
+
+            const expensesInMonth = Object.entries(allExpenses).filter(([dateKey]) => dateKey.startsWith(yearMonth)).flatMap(([dateKey, expenses]) => expenses.map(exp => ({ ...exp, date: dateKey }))).sort((a, b) => new Date(a.date) - new Date(b.date));
+            let totalExpenses = 0;
+            const expensesListEl = document.getElementById('summary-expenses-list');
+            expensesListEl.innerHTML = '';
+            if (expensesInMonth.length === 0) {
+                expensesListEl.innerHTML = '<li class="text-gray-500 dark:text-gray-400 italic">No hay gastos registrados.</li>';
+            } else {
+                expensesInMonth.forEach(exp => {
+                    totalExpenses += exp.amount;
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center py-1 border-b border-gray-100 dark:border-gray-700 last:border-b-0";
+                    const day = exp.date.split('-')[2];
+                    const descriptionText = exp.description.charAt(0).toUpperCase() + exp.description.slice(1);
+                    li.innerHTML = `<span>${day}/${yearMonth.split('-')[1]} - ${descriptionText}:</span><div class="flex items-center"><span class="font-medium text-red-500 dark:text-red-400 mr-2">$${formatNumber(exp.amount)}</span><button class="delete-expense-btn text-red-500 hover:text-red-700 delete-list-item-btn" data-date="${exp.date}" data-id="${exp.id}"><svg class="h-4 w-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>`;
+                    expensesListEl.appendChild(li);
+                });
+            }
+            document.getElementById('summary-total-expenses').textContent = `-$${formatNumber(totalExpenses)}`;
+
+            const earningsListEl = document.getElementById('summary-daily-earnings-list');
+            earningsListEl.innerHTML = '';
+
+            let totalMonthlyDebtorEarnings = 0;
+            let totalMonthlySalesEarnings = 0;
+            const paymentMethodTotals = { Efectivo: 0, Transferencia: 0, Posnet: 0 };
+            const daysInMonth = Object.keys(dailyEarnings).filter(dateKey => dateKey.startsWith(yearMonth)).sort();
+
+            const getShiftDetails = (shiftData) => {
+                if (!shiftData) return { total: 0, breakdown: '', payments: {} };
+                const total = shiftData.total || 0;
+                const parts = [];
+                if (shiftData.Efectivo > 0) parts.push(`E: $${formatNumber(shiftData.Efectivo)}`);
+                if (shiftData.Transferencia > 0) parts.push(`T: $${formatNumber(shiftData.Transferencia)}`);
+                if (shiftData.Posnet > 0) parts.push(`P: $${formatNumber(shiftData.Posnet)}`);
+                return { total, breakdown: parts.join(' / '), payments: { Efectivo: shiftData.Efectivo || 0, Transferencia: shiftData.Transferencia || 0, Posnet: shiftData.Posnet || 0 } };
+            };
+
+            if (daysInMonth.length === 0) {
+                earningsListEl.innerHTML = '<li class="text-gray-500 dark:text-gray-400 italic">No hay ganancias registradas.</li>';
+            } else {
+                daysInMonth.forEach(dateKey => {
+                    const earnings = dailyEarnings[dateKey] || {};
+                    const day = dateKey.split('-')[2];
+
+                    const manana = getShiftDetails(earnings.manana);
+                    const tarde = getShiftDetails(earnings.tarde);
+                    const debtorPaymentsOnDay = (earnings.debtorPayments || []).reduce((sum, p) => sum + p.amount, 0);
+                   
+                    const totalSalesOnDay = (manana.total || 0) + (tarde.total || 0); // Solo ventas cerradas
+                    const totalDia = totalSalesOnDay + debtorPaymentsOnDay;
+                    totalMonthlyDebtorEarnings += debtorPaymentsOnDay;
+                    totalMonthlySalesEarnings += totalSalesOnDay;
+
+                    paymentMethodTotals.Efectivo += (manana.payments.Efectivo || 0) + (tarde.payments.Efectivo || 0);
+                    paymentMethodTotals.Transferencia += (manana.payments.Transferencia || 0) + (tarde.payments.Transferencia || 0);
+                    paymentMethodTotals.Posnet += (manana.payments.Posnet || 0) + (tarde.payments.Posnet || 0);
+                    
+                    (earnings.debtorPayments || []).forEach(p => {
+                        const method = p.paymentMethod || 'Efectivo';
+                        paymentMethodTotals[method] = (paymentMethodTotals[method] || 0) + p.amount;
+                    });
+
+                    let debtorPaymentsBreakdown = (earnings.debtorPayments || []).map(p => 
+                        `<p class="text-xs text-blue-500 dark:text-blue-400 ml-2">Cobro Deuda: $${formatNumber(p.amount)} <span class="text-gray-500 dark:text-gray-400">(${p.paymentMethod || 'Efectivo'})</span></p>`
+                    ).join('');
+
+                    const li = document.createElement('li');
+                    li.className = "flex flex-col items-start py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0";
+                    li.innerHTML = `
+                        <div class="flex justify-between items-center w-full">
+                            <span>Día ${day}: <span class="font-medium text-lg">$${formatNumber(totalDia)}</span></span>
+                            <button class="delete-earning-btn text-red-500 hover:text-red-700 delete-list-item-btn" data-date="${dateKey}"><svg class="h-4 w-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                        </div>
+                        ${manana.breakdown ? `<p class="text-xs text-gray-500 dark:text-gray-400 ml-2">Mañana: ${manana.breakdown}</p>` : ''}
+                        ${tarde.breakdown ? `<p class="text-xs text-gray-500 dark:text-gray-400 ml-2">Tarde: ${tarde.breakdown}</p>` : ''}
+                        ${debtorPaymentsBreakdown}
+                    `;
+                    earningsListEl.appendChild(li);
+                });
+            }
+
+            document.getElementById('summary-total-sales-earnings').textContent = `$${formatNumber(totalMonthlySalesEarnings)}`;
+            document.getElementById('summary-total-debtor-earnings').textContent = `$${formatNumber(totalMonthlyDebtorEarnings)}`;
+            const netEarnings = totalMonthlySalesEarnings + totalMonthlyDebtorEarnings - totalExpenses;
+            document.getElementById('summary-total-net-earnings').textContent = `$${formatNumber(netEarnings)}`;
+
+            expensesListEl.querySelectorAll('.delete-expense-btn').forEach(btn => { btn.addEventListener('click', (e) => { const date = e.currentTarget.dataset.date; const id = e.currentTarget.dataset.id; deleteExpense(date, id); }); });
+            earningsListEl.querySelectorAll('.delete-earning-btn').forEach(btn => { btn.addEventListener('click', (e) => { const date = e.currentTarget.dataset.date; deleteDailyEarning(date); }); });
+
+            const isDark = document.documentElement.classList.contains('dark'), txtColor = isDark ? '#FFF' : '#333';
+            const ctx = document.getElementById('finance-chart').getContext('2d');
+            if (financeChart) { financeChart.destroy(); }
+            if (totalMonthlySalesEarnings > 0 || totalMonthlyDebtorEarnings > 0 || totalExpenses > 0) {
+                financeChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Ganancias (Ventas)', 'Cobro Deudas', 'Gastos'],
+                        datasets: [{
+                            label: 'Monto ($)',
+                            data: [totalMonthlySalesEarnings, totalMonthlyDebtorEarnings, totalExpenses],
+                            backgroundColor: ['rgba(16, 185, 129, 0.7)', 'rgba(59, 130, 246, 0.7)', 'rgba(239, 68, 68, 0.7)'],
+                            borderColor: ['#10B981', '#3B82F6', '#EF4444'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { ticks: { color: txtColor } }, y: { ticks: { color: txtColor } } },
+                        plugins: {
+                            legend: { display: false },
+                            title: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => `Monto: $${formatNumber(context.parsed.x)}`
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.save(); ctx.textAlign = 'center'; ctx.fillStyle = isDark ? '#9CA3AF' : '#6B7280'; ctx.font = '16px Inter';
+                ctx.fillText('Sin datos para el mes', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                ctx.restore();
+            }
+
+            renderVerduleriaSummary(yearMonth);
+        }
+        function renderVerduleriaSummary(yearMonth) {
+            const summaryList = document.getElementById('verduleria-summary-list');
+            const dailyTotalsContainer = document.getElementById('verduleria-daily-totals');
+            
+            summaryList.innerHTML = '';
+            dailyTotalsContainer.innerHTML = '';
+            dailyTotalsContainer.classList.add('hidden');
+
+            const createAccordion = (label, total, contentEl, level) => {
+                const wrapper = document.createElement('div');
+                const bgColors = ['bg-white dark:bg-gray-800', 'bg-gray-50 dark:bg-gray-700/30', 'bg-gray-100 dark:bg-gray-700/50', 'bg-gray-200 dark:bg-gray-700/70'];
+                wrapper.className = `mb-2 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700 ${bgColors[Math.min(level, 3)]}`;
+                
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-center p-3 cursor-pointer select-none hover:bg-opacity-80 transition-colors duration-200';
+                header.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="arrow text-gray-400 dark:text-gray-500 transform transition-transform duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                        </span>
+                        <span class="font-semibold text-gray-800 dark:text-gray-200 ${level===1?'text-lg':''}">${label}</span>
+                    </div>
+                    <span class="font-bold text-green-600 dark:text-green-400">$${formatNumber(total)}</span>`;
+                
+                contentEl.className = 'hidden p-2 border-t border-gray-200 dark:border-gray-700 pl-4';
+                
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    contentEl.classList.toggle('hidden');
+                    const arrow = header.querySelector('.arrow');
+                    arrow.style.transform = contentEl.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+                });
+
+                wrapper.appendChild(header);
+                wrapper.appendChild(contentEl);
+                return wrapper;
+            };
+
+            const daysInMonth = Object.keys(dailyEarnings).filter(dateKey => dateKey.startsWith(yearMonth)).sort().reverse();
+            const hierarchy = {}; 
+            let monthlyTotal = 0;
+
+            daysInMonth.forEach(dateKey => {
+                const earnings = dailyEarnings[dateKey] || {};
+                const dayItems = [];
+                let dayTotal = 0;
+
+                const collectItems = (sourceItems) => {
+                    if (!sourceItems) return;
+                    sourceItems.forEach(item => {
+                        const product = localInventory.find(p => p.id === item.productId);
+                        if (product && product.category === 'Verduleria') {
+                            const existing = dayItems.find(i => i.productId === item.productId);
+                            if (existing) {
+                                existing.quantity += item.quantity;
+                                existing.price += item.price;
+                            } else {
+                                dayItems.push({ productId: item.productId, name: product.name, quantity: item.quantity, price: item.price, type: product.type });
+                            }
+                            dayTotal += item.price;
+                        }
+                    });
+                };
+
+                collectItems(earnings.manana?.items);
+                collectItems(earnings.tarde?.items);
+                (earnings.debtorSales || []).forEach(s => collectItems(s.items));
+                (earnings.pendingSales || []).forEach(s => collectItems(s.items));
+
+                if (dayItems.length > 0) {
+                    monthlyTotal += dayTotal;
+                    const [y, m, d] = dateKey.split('-').map(Number);
+                    const dateObj = new Date(y, m - 1, d);
+                    const dayLabel = dateObj.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric' });
+                    
+                    const dayOfWeek = dateObj.getDay() || 7;
+                    const startOfWeek = new Date(dateObj);
+                    startOfWeek.setDate(dateObj.getDate() - dayOfWeek + 1);
+                    const endOfWeek = new Date(dateObj);
+                    endOfWeek.setDate(dateObj.getDate() + (7 - dayOfWeek));
+                    
+                    const weekKey = `${startOfWeek.toISOString().split('T')[0]}_${endOfWeek.toISOString().split('T')[0]}`;
+                    const weekLabel = `Semana del ${startOfWeek.getDate()} al ${endOfWeek.getDate()}`;
+
+                    if (!hierarchy[weekKey]) hierarchy[weekKey] = { label: weekLabel, total: 0, days: {} };
+                    hierarchy[weekKey].total += dayTotal;
+                    hierarchy[weekKey].days[dateKey] = { label: dayLabel, total: dayTotal, items: dayItems.sort((a, b) => a.name.localeCompare(b.name)) };
+                }
+            });
+
+            if (Object.keys(hierarchy).length === 0) {
+                summaryList.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400 italic">No hay ventas de verdulería este mes.</p>';
+                return;
+            }
+
+            Object.keys(hierarchy).sort().reverse().forEach(weekKey => {
+                const weekData = hierarchy[weekKey];
+                const weekContent = document.createElement('div');
+                
+                Object.keys(weekData.days).sort().reverse().forEach(dayKey => {
+                    const dayData = weekData.days[dayKey];
+                    const dayContent = document.createElement('div');
+                    dayContent.className = 'bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700';
+                    
+                    const ul = document.createElement('ul');
+                    ul.className = 'space-y-1';
+                    dayData.items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'flex justify-between text-sm';
+                        const qtyStr = item.type === 'Kilo' ? `${formatNumber(item.quantity)} gr` : `${item.quantity} u.`;
+                        li.innerHTML = `<span>${item.name} <span class="text-gray-500 dark:text-gray-400">(${qtyStr})</span></span> <span>$${formatNumber(item.price)}</span>`;
+                        ul.appendChild(li);
+                    });
+                    dayContent.appendChild(ul);
+
+                    weekContent.appendChild(createAccordion(dayData.label, dayData.total, dayContent, 3));
+                });
+
+                summaryList.appendChild(createAccordion(weekData.label, weekData.total, weekContent, 2));
+            });
+
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'mt-4 pt-4 border-t-2 border-gray-300 dark:border-gray-700 flex justify-between items-center font-bold text-xl';
+            totalDiv.innerHTML = `<span>Total del Mes:</span><span class="text-green-600 dark:text-green-400">$${formatNumber(monthlyTotal)}</span>`;
+            summaryList.appendChild(totalDiv);
+        }
+        function addExpense() { 
+            const dateInput = document.getElementById('expense-date'), descriptionInput = document.getElementById('expense-description'), amountInput = document.getElementById('expense-amount'); 
+            const dateValue = dateInput.value; 
+            const description = descriptionInput.value.trim(); 
+            const amount = parseFloat(amountInput.value) || 0;
+            if (!dateValue) { showToast("Seleccione fecha.", true); return; } if (!description) { showToast("Ingrese una descripción para el gasto.", true); return; } if (amount <= 0) { showToast("Ingrese monto válido.", true); return; } const newExpense = { id: generateId(), description, amount }; if (!allExpenses[dateValue]) { allExpenses[dateValue] = []; } allExpenses[dateValue].push(newExpense); saveExpenses(); renderFinanzasView(); showToast(`Gasto de $${formatNumber(amount)} (${description}) agregado.`); amountInput.value = ''; descriptionInput.value = ''; 
+        }
+        async function deleteExpense(dateKey, expenseId) { if (!allExpenses[dateKey]) return; const expenseIndex = allExpenses[dateKey].findIndex(exp => exp.id === expenseId); if (expenseIndex === -1) return; const expense = allExpenses[dateKey][expenseIndex]; const conf = await showModal("Confirmar Borrado", `Borrar gasto de $${formatNumber(expense.amount)} (${expense.description}) del ${dateKey}?`); if (conf) { allExpenses[dateKey].splice(expenseIndex, 1); if (allExpenses[dateKey].length === 0) { delete allExpenses[dateKey]; } saveExpenses(); renderFinanzasView(); showToast("Gasto borrado."); } }
+        async function deleteDailyEarning(dateKey) {
+            if (!dailyEarnings[dateKey]) return;
+            const earnings = dailyEarnings[dateKey] || {};
+            const getShiftTotal = (shiftData) => (shiftData ? shiftData.total : 0) || 0;
+            const totalDia = getShiftTotal(earnings.manana) + getShiftTotal(earnings.tarde) + (earnings.debtorPayments || []).reduce((s, p) => s + p.amount, 0);
+            const conf = await showModal("Confirmar Borrado", `Borrar todas las ganancias ($${formatNumber(totalDia)}) del ${dateKey}?`); if (conf) { delete dailyEarnings[dateKey]; saveDailyEarnings(); renderFinanzasView(); showToast(`Ganancias del ${dateKey} borradas.`); }
+        }
+
+        function setupImportExport() {
+            document.getElementById('export-data-btn').addEventListener('click', exportData);
+            document.getElementById('import-data-btn').addEventListener('click', () => { document.getElementById('import-data-input').click(); });
+            document.getElementById('import-data-input').addEventListener('change', importData);
+        }
+        function exportData() {
+            const dataToExport = {};
+            const keys = ['loDeMari_inventory', 'loDeMari_debtors', 'loDeMari_calendarNotes', 'loDeMari_allExpenses', 'loDeMari_dailyEarnings', 'loDeMari_salesHistory'];
+            keys.forEach(key => { const data = localStorage.getItem(key); if (data) { dataToExport[key] = JSON.parse(data); } });
+            const jsonString = JSON.stringify(dataToExport, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `lo-de-mari-backup-${getYearMonthDay(new Date())}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            showToast("Datos exportados correctamente.");
+        }
+        async function importData(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const conf = await showModal("Confirmar Importación", "Esto reemplazará todos los datos actuales. ¿Estás seguro?");
+            if (!conf) { event.target.value = ''; return; }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    Object.keys(importedData).forEach(key => { localStorage.setItem(key, JSON.stringify(importedData[key])); });
+                    showToast("Datos importados. La página se recargará.");
+                    setTimeout(() => location.reload(), 1500);
+                } catch (error) {
+                    showToast("Error al leer el archivo. Asegúrate de que sea un respaldo válido.", true);
+                    console.error("Error al importar:", error);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function setupCierreCaja() {
+            document.getElementById('record-manana').addEventListener('click', () => recordEarnings('manana'));
+            document.getElementById('record-tarde').addEventListener('click', () => recordEarnings('tarde'));
+            updateCierreCajaView();
+        }
+        function updateCierreCajaView() {
+            const todayStr = getYearMonthDay(new Date());
+            const earningsToday = dailyEarnings[todayStr] || { pendingSales: [] };
+            const pendingSales = earningsToday.pendingSales || [];
+
+            const lists = {
+                Efectivo: document.getElementById('cierre-list-efectivo'),
+                Transferencia: document.getElementById('cierre-list-transferencia'),
+                Posnet: document.getElementById('cierre-list-posnet')
+            };
+            const subtotals = { Efectivo: 0, Transferencia: 0, Posnet: 0 };
+            Object.values(lists).forEach(list => list.innerHTML = '');
+
+            pendingSales.forEach(sale => {
+                const method = sale.paymentMethod || 'Efectivo';
+                subtotals[method] += sale.amount;
+                const listEl = lists[method];
+                if (listEl) {
+                    const saleTime = new Date(sale.timestamp);
+                    const timeString = `${String(saleTime.getHours()).padStart(2, '0')}:${String(saleTime.getMinutes()).padStart(2, '0')}`;
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center";
+                    li.innerHTML = `<span><span class="font-medium">$${formatNumber(sale.amount)}</span> <span class="text-xs text-gray-500">(${timeString}hs)</span></span>
+                        <div class="space-x-2">
+                            <button class="edit-pending-sale-btn text-blue-500 hover:text-blue-700 text-sm" data-id="${sale.id}">Editar</button>
+                            <button class="delete-pending-sale-btn text-red-500 hover:text-red-700 text-sm" data-id="${sale.id}">Borrar</button>
+                        </div>`;
+                    listEl.appendChild(li);
+                }
+            });
+
+            document.getElementById('cierre-subtotal-efectivo').textContent = `$${formatNumber(subtotals.Efectivo)}`;
+            document.getElementById('cierre-subtotal-transferencia').textContent = `$${formatNumber(subtotals.Transferencia)}`;
+            document.getElementById('cierre-subtotal-posnet-bruto').textContent = `$${formatNumber(subtotals.Posnet)}`;
+            const posnetDescuento = subtotals.Posnet * 0.04;
+            const posnetNeto = subtotals.Posnet - posnetDescuento;
+            document.getElementById('cierre-subtotal-posnet-descuento').textContent = `-$${formatNumber(posnetDescuento)}`;
+            document.getElementById('cierre-subtotal-posnet-neto').textContent = `$${formatNumber(roundPrice(posnetNeto))}`;
+
+            Object.values(lists).forEach(listEl => {
+                if (listEl.innerHTML === '') {
+                    listEl.innerHTML = '<li class="text-center text-gray-500 dark:text-gray-400 italic text-xs">Sin ventas.</li>';
+                }
+            });
+
+            document.querySelectorAll('.edit-pending-sale-btn').forEach(btn => btn.addEventListener('click', (e) => editPendingSale(e.currentTarget.dataset.id)));
+            document.querySelectorAll('.delete-pending-sale-btn').forEach(btn => btn.addEventListener('click', (e) => deletePendingSale(e.currentTarget.dataset.id)));
+
+            const totalPending = subtotals.Efectivo + subtotals.Transferencia + roundPrice(posnetNeto);
+            document.getElementById('cierre-total-pending').textContent = `$${formatNumber(totalPending)}`;
+        }
+        async function editPendingSale(saleId) {
+            const todayStr = getYearMonthDay(new Date());
+            const sale = dailyEarnings[todayStr]?.pendingSales.find(s => s.id === saleId);
+            if (!sale) return;
+
+            const newAmountStr = prompt(`Editar monto de la venta (actual: $${formatNumber(sale.amount)}):`, sale.amount);
+            if (newAmountStr === null) return;
+
+            const newAmount = parseFloat(newAmountStr);
+            if (isNaN(newAmount) || newAmount < 0) { showToast("Monto inválido.", true); return; }
+
+            sale.amount = roundPrice(newAmount); 
+            saveDailyEarnings();
+            updateCierreCajaView();
+            showToast("Monto de venta actualizado.");
+        }
+        async function deletePendingSale(saleId) {
+            const todayStr = getYearMonthDay(new Date());
+            if (!dailyEarnings[todayStr]?.pendingSales) return;
+
+            const conf = await showModal("Confirmar Borrado", "¿Seguro que quieres borrar esta entrada de venta?");
+            if (conf) {
+                dailyEarnings[todayStr].pendingSales = dailyEarnings[todayStr].pendingSales.filter(s => s.id !== saleId);
+                saveDailyEarnings();
+                updateCierreCajaView();
+                showToast("Entrada de venta borrada."); 
+            }
+        }
+        function recordEarnings(shift) {
+            const todayStr = getYearMonthDay(new Date());
+            const pendingSales = dailyEarnings[todayStr]?.pendingSales || [];
+            if (pendingSales.length === 0) { showToast("No hay ventas pendientes para registrar.", true); return; }
+
+            if (!dailyEarnings[todayStr]) dailyEarnings[todayStr] = {};
+            if (typeof dailyEarnings[todayStr][shift] !== 'object' || dailyEarnings[todayStr][shift] === null) {
+                dailyEarnings[todayStr][shift] = { total: 0, Efectivo: 0, Transferencia: 0, Posnet: 0, items: [] };
+            }
+
+            let totalToRecord = 0;
+            let allItemsFromSales = [];
+            const paymentMethodTotals = { Efectivo: 0, Transferencia: 0, Posnet: 0 };
+
+            pendingSales.forEach(sale => {
+                const method = sale.paymentMethod || 'Efectivo';
+                let amountToRecord = sale.amount;
+                if (method === 'Posnet') {
+                    amountToRecord *= 0.96;
+                }
+                totalToRecord += amountToRecord;
+                paymentMethodTotals[method] += amountToRecord;
+                if (sale.items) {
+                    allItemsFromSales.push(...sale.items);
+                }
+            });
+
+            const currentShiftData = dailyEarnings[todayStr][shift];
+            currentShiftData.total = (currentShiftData.total || 0) + totalToRecord;
+            currentShiftData.Efectivo = (currentShiftData.Efectivo || 0) + paymentMethodTotals.Efectivo;
+            currentShiftData.Transferencia = (currentShiftData.Transferencia || 0) + paymentMethodTotals.Transferencia;
+            currentShiftData.Posnet = (currentShiftData.Posnet || 0) + paymentMethodTotals.Posnet;
+            currentShiftData.items = (currentShiftData.items || []).concat(allItemsFromSales);
+            
+            dailyEarnings[todayStr].pendingSales = [];
+            saveDailyEarnings();
+            showToast(`Ganancia ${shift} ($${formatNumber(totalToRecord)}) registrada.`);
+            updateCierreCajaView();
+        }
+
+        function setupSalesHistory() {
+            document.getElementById('historial-filter-today').addEventListener('click', () => renderSalesHistory('today'));
+            document.getElementById('historial-filter-week').addEventListener('click', () => renderSalesHistory('week'));
+            document.getElementById('historial-filter-month').addEventListener('click', () => renderSalesHistory('month'));
+            document.getElementById('historial-filter-year').addEventListener('click', () => renderSalesHistory('year'));
+        }
+        function renderSalesHistory(filter = 'today') {
+            const container = document.getElementById('sales-history-container');
+            container.innerHTML = '';
+
+            document.querySelectorAll('.historial-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                btn.classList.add('hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            });
+            const activeBtn = document.getElementById(`historial-filter-${filter}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                activeBtn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            }
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+            const dayOfWeek = today.getDay() || 7; 
+            startOfWeek.setDate(today.getDate() - (dayOfWeek - 1));
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+            const filteredSales = salesHistory.filter(sale => {
+                const saleDate = new Date(sale.timestamp);
+                switch (filter) {
+                    case 'week': return saleDate >= startOfWeek;
+                    case 'month': return saleDate >= startOfMonth;
+                    case 'year': return true;
+                    case 'today':
+                    default: return saleDate >= today;
+                }
+            });
+
+            if (filteredSales.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No hay ventas en el período seleccionado.</p>';
+                return;
+            }
+
+            // Build Hierarchy: Year -> Month -> Week -> Day
+            const hierarchy = {};
+
+            filteredSales.forEach(sale => {
+                const date = new Date(sale.timestamp);
+                const year = date.getFullYear();
+                const monthIndex = date.getMonth();
+                const monthLabel = date.toLocaleDateString('es-AR', { month: 'long' });
+                const monthKey = `${year}-${String(monthIndex).padStart(2, '0')}`;
+
+                const dayOfWeek = date.getDay() || 7; 
+                const startOfWeek = new Date(date);
+                startOfWeek.setDate(date.getDate() - dayOfWeek + 1);
+                const firstDayOfMonth = new Date(year, monthIndex, 1);
+                if (startOfWeek < firstDayOfMonth) startOfWeek.setTime(firstDayOfMonth.getTime());
+                
+                const endOfWeek = new Date(date);
+                endOfWeek.setDate(date.getDate() + (7 - dayOfWeek));
+                const lastDayOfMonth = new Date(year, monthIndex + 1, 0);
+                if (endOfWeek > lastDayOfMonth) endOfWeek.setTime(lastDayOfMonth.getTime());
+
+                const weekLabel = `Semana del ${startOfWeek.getDate()} al ${endOfWeek.getDate()}`;
+                const weekKey = `${monthKey}-${String(startOfWeek.getDate()).padStart(2, '0')}`;
+
+                const dayLabel = date.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric' });
+                const dayKey = getYearMonthDay(date);
+
+                if (!hierarchy[year]) hierarchy[year] = { total: 0, months: {} };
+                hierarchy[year].total += sale.totalAmount;
+
+                if (!hierarchy[year].months[monthKey]) hierarchy[year].months[monthKey] = { label: monthLabel, total: 0, weeks: {} };
+                hierarchy[year].months[monthKey].total += sale.totalAmount;
+
+                if (!hierarchy[year].months[monthKey].weeks[weekKey]) hierarchy[year].months[monthKey].weeks[weekKey] = { label: weekLabel, total: 0, days: {} };
+                hierarchy[year].months[monthKey].weeks[weekKey].total += sale.totalAmount;
+
+                if (!hierarchy[year].months[monthKey].weeks[weekKey].days[dayKey]) hierarchy[year].months[monthKey].weeks[weekKey].days[dayKey] = { label: dayLabel, total: 0, sales: [] };
+                hierarchy[year].months[monthKey].weeks[weekKey].days[dayKey].total += sale.totalAmount;
+                hierarchy[year].months[monthKey].weeks[weekKey].days[dayKey].sales.push(sale);
+            });
+
+            const createAccordion = (label, total, contentEl, level) => {
+                const wrapper = document.createElement('div');
+                const bgColors = ['bg-white dark:bg-gray-800', 'bg-gray-50 dark:bg-gray-700/30', 'bg-gray-100 dark:bg-gray-700/50', 'bg-gray-200 dark:bg-gray-700/70'];
+                wrapper.className = `mb-2 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700 ${bgColors[Math.min(level, 3)]}`;
+                
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-center p-3 cursor-pointer select-none hover:bg-opacity-80 transition-colors duration-200';
+                header.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="arrow text-gray-400 dark:text-gray-500 transform transition-transform duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                        </span>
+                        <span class="font-semibold text-gray-800 dark:text-gray-200 ${level===1?'text-lg':''}">${label}</span>
+                    </div>
+                    <span class="font-bold text-green-600 dark:text-green-400">$${formatNumber(total)}</span>`;
+                
+                contentEl.className = 'hidden p-2 border-t border-gray-200 dark:border-gray-700 pl-4';
+                
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    contentEl.classList.toggle('hidden');
+                    const arrow = header.querySelector('.arrow');
+                    arrow.style.transform = contentEl.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+                });
+
+                wrapper.appendChild(header);
+                wrapper.appendChild(contentEl);
+                return wrapper;
+            };
+
+            const renderDays = (days, parentEl) => {
+                Object.keys(days).sort().reverse().forEach(dayKey => {
+                    const dayData = days[dayKey];
+                    const dayContent = document.createElement('div');
+                    dayContent.className = 'space-y-2';
+                    dayData.sales.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(sale => {
+                    const saleEl = document.createElement('details');
+                    saleEl.className = 'bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700';
+                    const time = new Date(sale.timestamp).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+                    const paymentMethods = Object.entries(sale.paymentMethods || {}).map(([method, amount]) => `${method}: $${formatNumber(amount)}`).join(', ');
+                    const itemsList = sale.items.map(item => `<li class="text-sm text-gray-600 dark:text-gray-300">${item.quantity}${item.type === 'Unidad' ? 'x' : 'gr'} ${item.name} - $${formatNumber(item.price)}</li>`).join('');
+
+                    saleEl.innerHTML = `
+                        <summary class="flex justify-between items-center cursor-pointer select-none">
+                            <div class="flex items-center gap-3">
+                                <span class="arrow text-gray-400 dark:text-gray-500 transform transition-transform duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                    <span class="font-bold text-base">${time}hs</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">${sale.type || 'Venta'}</span>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-green-600 dark:text-green-400">$${formatNumber(sale.totalAmount)}</span>
+                        </summary>
+                        <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 pl-7">
+                            <p class="text-sm mb-2"><strong>Pagado con:</strong> ${paymentMethods}</p>
+                            ${sale.notes ? `<p class="text-sm italic text-purple-500 dark:text-purple-400 mb-2">${sale.notes}</p>` : ''}
+                            <ul class="list-disc list-inside space-y-1">${itemsList}</ul>
+                        </div>`;
+                        dayContent.appendChild(saleEl);
+                    });
+                    parentEl.appendChild(createAccordion(dayData.label, dayData.total, dayContent, 3));
+                });
+            };
+
+            const renderWeeks = (weeks, parentEl) => {
+                Object.keys(weeks).sort().reverse().forEach(weekKey => {
+                    const weekData = weeks[weekKey];
+                    const weekContent = document.createElement('div');
+                    renderDays(weekData.days, weekContent);
+                    parentEl.appendChild(createAccordion(weekData.label, weekData.total, weekContent, 2));
+                });
+            };
+
+            const renderMonths = (months, parentEl) => {
+                Object.keys(months).sort().reverse().forEach(monthKey => {
+                    const monthData = months[monthKey];
+                    const monthContent = document.createElement('div');
+                    renderWeeks(monthData.weeks, monthContent);
+                    parentEl.appendChild(createAccordion(monthData.label.charAt(0).toUpperCase() + monthData.label.slice(1), monthData.total, monthContent, 1));
+                });
+            };
+
+            Object.keys(hierarchy).sort().reverse().forEach(yearKey => {
+                const yearData = hierarchy[yearKey];
+                if (filter === 'year') {
+                    const yearContent = document.createElement('div');
+                    renderMonths(yearData.months, yearContent);
+                    container.appendChild(createAccordion(yearKey, yearData.total, yearContent, 0));
+                } else if (filter === 'month') {
+                    Object.values(yearData.months).forEach(m => renderWeeks(m.weeks, container));
+                } else if (filter === 'week' || filter === 'today') {
+                    Object.values(yearData.months).forEach(m => {
+                        Object.values(m.weeks).forEach(w => {
+                            renderDays(w.days, container);
+                        });
+                    });
+                }
+            });
+        }
+
+        function setupFormPersistence() {
+            const persist = (formId, fields) => {
+                const form = document.getElementById(formId);
+                const storageKey = APP_STATE_PREFIX + formId;
+                fields.forEach(fieldId => {
+                    const input = form.querySelector(`#${fieldId}`);
+                    if (input) {
+                        input.addEventListener('input', () => {
+                            const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
+                            data[fieldId] = input.value;
+                            localStorage.setItem(storageKey, JSON.stringify(data));
+                        });
+                    }
+                });
+            };
+            persist('product-form', ['product-name', 'product-brand', 'product-size', 'product-price', 'product-type']); 
+            persist('add-expense-form', ['expense-date', 'expense-description', 'expense-amount']); 
+        }
+        function restoreFormState() {
+            document.querySelectorAll('form').forEach(form => {
+                const storageKey = APP_STATE_PREFIX + form.id;
+                const data = JSON.parse(localStorage.getItem(storageKey) || '{}');
+                Object.keys(data).forEach(fieldId => {
+                    const input = form.querySelector(`#${fieldId}`);
+                    if (input) input.value = data[fieldId];
+                });
+            });
+            ['inventory-search', 'pos-search', 'debtor-search', 'pos-quantity', 'percentage-category', 'percentage-increase'].forEach(id => {
+                const value = localStorage.getItem(APP_STATE_PREFIX + id); // Note: pos-search is now per-card
+                const el = document.getElementById(id);
+                if (el && value) el.value = value;
+            });
+        }
+
+        function initializeBarcodeListener() {
+            let buffer = '', lastKeyTime = 0;
+            window.addEventListener('keydown', (e) => {
+                const currentTime = new Date().getTime();
+                if (currentTime - lastKeyTime > 100) {
+                    buffer = '';
+                }
+
+                if (e.key === 'Enter') {
+                    if (buffer.length > 3) {
+                        const product = localInventory.find(p => p.barcodes && p.barcodes.includes(buffer));
+                        if (product) {
+                            handleScannedProduct(product);
+                        } else {
+                            showToast(`Código de barras "${buffer}" no encontrado.`, true);
+                        }
+                    }
+                    buffer = '';
+                } else if (!['Shift', 'Control', 'Alt', 'CapsLock', 'Tab', 'Meta'].includes(e.key)) {
+                    buffer += e.key;
+                }
+                lastKeyTime = currentTime;
+            });
+        }
+        
+        function handleScannedProduct(product) {
+            const currentView = localStorage.getItem('loDeMari_currentView') || 'vender';
+            if (currentView === 'vender') {
+                addPOSToSale(activePosSaleIndex, product.id, 1, 'Unidad');
+                showToast(`${product.name} agregado al pedido activo.`);
+            } else if (currentView === 'deudores' && currentDebtorId) {                
+                addItemToDebtor(null, product.id, 1);
+                showToast(`${product.name} agregado a la cuenta de ${currentDebtorData?.name}.`);
+            } else {
+                switchView('vender', () => {
+                    addPOSToSale(activePosSaleIndex, product.id, 1, 'Unidad');
+                    showToast(`${product.name} agregado al pedido activo.`);
+                });
+            }
+        }
+
+        function setupKeyboardNavigation() {
+            window.addEventListener('keydown', (e) => {
+                const activeEl = document.activeElement;
+                if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+                    return;
+                }
+
+                const navButtons = Array.from(document.querySelectorAll('#mobile-menu .nav-btn'));
+                const viewOrder = navButtons.map(btn => btn.dataset.view);
+                const currentView = localStorage.getItem('loDeMari_currentView') || 'vender'; // Esto se puede mejorar
+                const currentIndex = viewOrder.indexOf(currentView);
+
+                if (currentIndex === -1) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault(); // Prevenir scroll
+                    switchView(viewOrder[(currentIndex + 1) % viewOrder.length]);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    switchView(viewOrder[(currentIndex - 1 + viewOrder.length) % viewOrder.length]);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInventory(); 
+            loadExpenses(); 
+            loadDailyEarnings(); 
+            loadSalesHistory();
+            loadPosSales();
+            loadDebtors();
+            loadPendingPayments();
+            
+            restoreFormState();
+            
+            setupNavigation(); 
+            setupThemeToggle(); 
+            setupHamburgerMenu();
+            InventoryService.init();
+            setupSearchFilters(); 
+            setupQuickSave();
+            setupFormPersistence();
+            setupKeyboardNavigation();
+            initializeBarcodeListener();
+            setupPOS(); 
+            setupDebtors();
+            setupFinanzas(); 
+            setupCierreCaja(); 
+            setupSalesHistory();
+            setupImportExport();
+            
+            updateProductSelects(); 
+            updatePosDebtorSelect();
+            renderPendingSales();
+            
+            const lastView = localStorage.getItem('loDeMari_currentView') || 'vender';
+            switchView(lastView);
+        });
+    </script>
+</body>
+</html>
