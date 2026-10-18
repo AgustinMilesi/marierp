@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+    --canvas-bg: #dbe6e1;
+    --card-container-bg: #e6ede9;
+    --teal-dark: #2b413c;
+    --teal-card: #2b413c;
+    --gold-accent: #df9b28;
+    --gold-hover: #ca851b;
+    --mint-pill: #e6ede9;
+}
+
+html.dark {
+    --canvas-bg: #0c1412;
+    --card-container-bg: #131f1c;
+    --teal-dark: #0f1815;
+    --teal-card: #1d302a;
+    --gold-accent: #df9b28;
+    --gold-hover: #f5ab32;
+    --mint-pill: #223731;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overscroll-behavior-y: contain;
+    background-color: var(--canvas-bg);
+    color: #243733;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+html.dark body {
+    background-color: var(--canvas-bg);
+    color: #e6f0ec;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type='number'] { -moz-appearance: textfield; }
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    height: 1em;
+    width: 1em;
+    margin-left: .5rem;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239CA3AF'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>");
+    cursor: pointer;
+}
+
+/* Organic ambient glow matching brand visual identity */
+.ambient-blob {
+    position: fixed;
+    top: -140px;
+    left: -140px;
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(circle, rgba(223, 155, 40, 0.45) 0%, rgba(223, 155, 40, 0.15) 50%, transparent 70%);
+    filter: blur(85px);
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.3s ease;
+}
+
+html.dark .ambient-blob {
+    background: radial-gradient(circle, rgba(223, 155, 40, 0.25) 0%, rgba(223, 155, 40, 0.05) 50%, transparent 70%);
+    opacity: 0.65;
+}
+
+/* Nav item cutout pill style */
+.nav-btn {
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgba(255, 255, 255, 0.8);
+}
+.nav-btn:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.nav-btn.nav-active,
+.nav-btn[data-active="true"] {
+    background-color: var(--mint-pill) !important;
+    color: #243733 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+}
+html.dark .nav-btn.nav-active,
+html.dark .nav-btn[data-active="true"] {
+    background-color: #243b35 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+}
+.nav-btn.nav-active .nav-icon,
+.nav-btn[data-active="true"] .nav-icon {
+    color: var(--gold-accent) !important;
+}
+
+/* Payment method pills matching dark card */
+.type-btn-active {
+    background-color: var(--gold-accent) !important;
+    border-color: var(--gold-accent) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 12px rgba(223, 155, 40, 0.4) !important;
+}
+.type-btn-inactive {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+.type-btn-inactive:hover {
+    background-color: rgba(255, 255, 255, 0.16) !important;
+    color: #ffffff !important;
+}
+
+/* Inactive buttons in debtor modal (white background card) */
+#debtor-payment-methods .type-btn-inactive {
+    background-color: #f4f8f6 !important;
+    border-color: #d8e2dc !important;
+    color: #5e7770 !important;
+}
+#debtor-payment-methods .type-btn-inactive:hover {
+    background-color: #e4ede8 !important;
+    color: #2b413c !important;
+}
+html.dark #debtor-payment-methods .type-btn-inactive {
+    background-color: #141f1c !important;
+    border-color: #293f38 !important;
+    color: #9abfb5 !important;
+}
+html.dark #debtor-payment-methods .type-btn-inactive:hover {
+    background-color: #20332d !important;
+    color: #ffffff !important;
+}
+
+.calendar-day { position: relative; }
+.calendar-day.today div { border: 2px solid rgb(59 130 246); }
+.calendar-day .note-indicator { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background-color: rgb(34 197 94); border-radius: 50%; }
+html.dark .calendar-day .note-indicator { background-color: rgb(74 222 128); }
+
+.delete-list-item-btn { opacity: 0.5; transition: opacity 0.2s ease-in-out; }
+li:hover .delete-list-item-btn, tr:hover .delete-list-item-btn { opacity: 1; }
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary .arrow { transition: transform 0.2s; }
+details[open] > summary .arrow { transform: rotate(90deg); }
+
+/* Universal Dark Mode Styles for 100% Robustness Offline & Online */
+html.dark .bg-white {
+    background-color: #1a2a25 !important;
+    color: #e6f0ec !important;
+}
+html.dark .bg-\[\#e6ede9\] {
+    background-color: #131f1c !important;
+}
+html.dark .bg-\[\#dbe6e1\] {
+    background-color: #0c1412 !important;
+}
+html.dark .bg-\[\#f4f8f6\] {
+    background-color: #121c19 !important;
+}
+html.dark .bg-\[\#f0f5f2\] {
+    background-color: #1e302b !important;
+    color: #e6f0ec !important;
+}
+html.dark .border-\[\#d8e2dc\] {
+    border-color: #293f38 !important;
+}
+html.dark .border-\[\#e4ede8\] {
+    border-color: #233630 !important;
+}
+html.dark .border-\[\#3c564f\] {
+    border-color: #2b453e !important;
+}
+html.dark .border-white\/80 {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+html.dark .text-\[\#2b413c\],
+html.dark .text-\[\#253a35\],
+html.dark .text-\[\#243733\] {
+    color: #e6f0ec !important;
+}
+html.dark .text-\[\#5e7770\] {
+    color: #9abfb5 !important;
+}
+html.dark .text-gray-600,
+html.dark .text-gray-700,
+html.dark .text-gray-800 {
+    color: #cbd5e1 !important;
+}
+html.dark .text-gray-500 {
+    color: #94a3b8 !important;
+}
+html.dark input,
+html.dark select,
+html.dark textarea {
+    background-color: #121c19 !important;
+    border-color: #293f38 !important;
+    color: #e6f0ec !important;
+}
+html.dark input::placeholder {
+    color: #6a8c83 !important;
+}
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+    border-color: #df9b28 !important;
+    background-color: #172420 !important;
+    box-shadow: 0 0 0 2px rgba(223, 155, 40, 0.25) !important;
+}
+html.dark #theme-toggle {
+    background-color: #1e302b !important;
+    color: #df9b28 !important;
+    border: 1px solid #293f38 !important;
+}
+html.dark #theme-toggle:hover {
+    background-color: #29423b !important;
+}
+html.dark .pos-tab-btn {
+    color: #9abfb5 !important;
+}
+html.dark .pos-tab-btn:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+html.dark .pos-tab-btn.bg-\[\#2b413c\] {
+    background-color: #df9b28 !important;
+    color: #0c1412 !important;
+    font-weight: 900 !important;
+    box-shadow: 0 2px 8px rgba(223, 155, 40, 0.35) !important;
+}
+html.dark .historial-filter-btn {
+    color: #9abfb5 !important;
+}
+html.dark .historial-filter-btn.bg-\[\#2b413c\] {
+    background-color: #df9b28 !important;
+    color: #0c1412 !important;
+    font-weight: 900 !important;
+}
+html.dark aside {
+    background-color: #101c18 !important;
+    border-right: 1px solid #233630;
+}
+html.dark #mobile-menu {
+    background-color: #101c18 !important;
+}

@@ -70,11 +70,27 @@ The application features a modern luxury palette inspired by premier financial a
 
 ```
 marierp/
-├── ERPmari.html                     # Complete single-page application with luxury UI
-├── chart.min.js                     # Local Chart.js library for offline financial charts
-├── tailwind.min.js                  # Local Tailwind CSS engine for offline rendering
-├── logo.png                         # Store branding asset
-└── lo-de-mari-backup-2026-10-15.json # Reference database snapshot
+├── index.html                       # Semantic application shell & module loader
+├── ERPmari.html                     # Backward-compatible standalone entrypoint
+├── Crear Acceso en Escritorio.bat    # 1-Click desktop shortcut installer with custom icon
+├── Abrir Sistema.bat                # Portable launcher for local execution
+├── Lo de Mari - Sistema.lnk         # Direct Windows shortcut
+├── logo.ico                         # Windows application icon
+├── logo.png                         # High-res store branding graphic
+├── chart.min.js                     # Local Chart.js engine for offline financial graphs
+├── tailwind.min.js                  # Local Tailwind CSS engine for offline styling
+├── css/
+│   └── styles.css                   # Custom CSS variables, dark mode & layout tokens
+└── js/
+    ├── state.js                     # Global reactive state and math/formatting helpers
+    ├── db.js                        # IndexedDB storage engine, auto-save & JSON backups
+    ├── pos.js                       # Multi-order POS terminal, cart and checkout engine
+    ├── inventario.js                # Catalog CRUD, category sorting & barcode scanner
+    ├── deudores.js                  # Customer debt accounts & payment reconciliation
+    ├── caja.js                      # Cash shifts and blind drawer reconciliation
+    ├── finanzas.js                  # Expenses, earnings breakdown, calendar & Chart.js
+    ├── historial.js                 # Filtered sales audit log & itemized accordions
+    └── app.js                       # Router, theme toggle, keyboard shortcuts & bootstrap
 ```
 
 ---
@@ -83,14 +99,11 @@ marierp/
 
 No `npm install`, build step, or server configuration required:
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/AgustinMilesi/marierp.git
-   cd marierp
-   ```
+1. **Install shortcut on Desktop (Recommended):**
+   Double-click `Crear Acceso en Escritorio.bat`. It automatically creates a named shortcut **"Lo de Mari - Sistema"** on the Windows Desktop with the store's custom icon.
 
-2. **Open the application:**
-   Double-click `ERPmari.html` or open it with your favorite browser.
+2. **Or open directly:**
+   Double-click `index.html` (or `Abrir Sistema.bat`) in Chrome, Edge, or Firefox.
 
 3. **Restore data (Optional):**
    Navigate to **Configuración** > **Importar / Exportar Datos** and load a backup `.json` file to restore your catalog and historical records.
