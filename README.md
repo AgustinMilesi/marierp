@@ -62,7 +62,7 @@ The application features a modern luxury palette inspired by premier financial a
 
 ### 6. 🔒 Backup & Restore
 - Single-click **Guardar** button creates timestamped JSON backups.
-- Complete bidirectional JSON migration compatibility with the cloud **Retail ERP & POS** ecosystem.
+- Complete standalone JSON backup export and import for data safety and local recovery.
 
 ---
 
@@ -94,19 +94,6 @@ No `npm install`, build step, or server configuration required:
 
 3. **Restore data (Optional):**
    Navigate to **Configuración** > **Importar / Exportar Datos** and load a backup `.json` file to restore your catalog and historical records.
-
----
-
-## 🌐 Complete Ecosystem Suite
-
-This offline retail application is part of a unified 4-tier commercial software suite:
-
-| Component | Repository | Live Deployment | Role & Focus |
-|---|---|---|---|
-| **Retail ERP & POS** | [AgustinMilesi/erp](https://github.com/AgustinMilesi/erp) | [milesi-erp.vercel.app](https://milesi-erp.vercel.app) | Cloud multi-tenant ERP, atomic stock ledger, cashier shifts, thermal tickets, and REST API. |
-| **Customer Inbox SaaS** | [AgustinMilesi/saas](https://github.com/AgustinMilesi/saas) | [saas-am.vercel.app](https://saas-am.vercel.app) | Multi-tenant customer inquiry inbox, embeddable contact forms, contact directory, and CRM leads bridge. |
-| **Contact Portal** | [AgustinMilesi/contact](https://github.com/AgustinMilesi/contact) | [agustinmilesi-contact.vercel.app](https://agustinmilesi-contact.vercel.app) | High-intent lead generation portal, anti-spam validation gateway, and email delivery dispatch. |
-| **Offline Retail ERP** | [AgustinMilesi/marierp](https://github.com/AgustinMilesi/marierp) | [GitHub Repository](https://github.com/AgustinMilesi/marierp) | 100% offline-first grocery & retail POS with IndexedDB storage, order tabs, and luxury teal/gold interface. *(This Repository)* |
 
 ---
 
