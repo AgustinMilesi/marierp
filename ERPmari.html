@@ -21,12 +21,30 @@
             --gold-hover: #ca851b;
             --mint-pill: #e6ede9;
         }
+
+        html.dark {
+            --canvas-bg: #0c1412;
+            --card-container-bg: #131f1c;
+            --teal-dark: #0f1815;
+            --teal-card: #1d302a;
+            --gold-accent: #df9b28;
+            --gold-hover: #f5ab32;
+            --mint-pill: #223731;
+        }
+
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             overscroll-behavior-y: contain;
             background-color: var(--canvas-bg);
             color: #243733;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
+
+        html.dark body {
+            background-color: var(--canvas-bg);
+            color: #e6f0ec;
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         input[type='number']::-webkit-inner-spin-button,
@@ -45,6 +63,11 @@
             filter: blur(85px);
             pointer-events: none;
             z-index: 0;
+            transition: opacity 0.3s ease;
+        }
+        html.dark .ambient-blob {
+            background: radial-gradient(circle, rgba(223, 155, 40, 0.25) 0%, rgba(223, 155, 40, 0.05) 50%, transparent 70%);
+            opacity: 0.65;
         }
 
         /* Nav item cutout pill style */
@@ -63,6 +86,12 @@
             color: #243733 !important;
             font-weight: 800 !important;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+        }
+        html.dark .nav-btn.nav-active,
+        html.dark .nav-btn[data-active="true"] {
+            background-color: #243b35 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
         }
         .nav-btn.nav-active .nav-icon,
         .nav-btn[data-active="true"] .nav-icon {
@@ -96,6 +125,15 @@
             background-color: #e4ede8 !important;
             color: #2b413c !important;
         }
+        html.dark #debtor-payment-methods .type-btn-inactive {
+            background-color: #141f1c !important;
+            border-color: #293f38 !important;
+            color: #9abfb5 !important;
+        }
+        html.dark #debtor-payment-methods .type-btn-inactive:hover {
+            background-color: #20332d !important;
+            color: #ffffff !important;
+        }
 
         .calendar-day { position: relative; }
         .calendar-day.today div { border: 2px solid rgb(59 130 246); }
@@ -108,6 +146,106 @@
         details > summary::-webkit-details-marker { display: none; }
         details > summary .arrow { transition: transform 0.2s; }
         details[open] > summary .arrow { transform: rotate(90deg); }
+
+        /* Universal Dark Mode Styles for 100% Robustness Offline & Online */
+        html.dark .bg-white {
+            background-color: #1a2a25 !important;
+            color: #e6f0ec !important;
+        }
+        html.dark .bg-\[\#e6ede9\] {
+            background-color: #131f1c !important;
+        }
+        html.dark .bg-\[\#dbe6e1\] {
+            background-color: #0c1412 !important;
+        }
+        html.dark .bg-\[\#f4f8f6\] {
+            background-color: #121c19 !important;
+        }
+        html.dark .bg-\[\#f0f5f2\] {
+            background-color: #1e302b !important;
+            color: #e6f0ec !important;
+        }
+        html.dark .border-\[\#d8e2dc\] {
+            border-color: #293f38 !important;
+        }
+        html.dark .border-\[\#e4ede8\] {
+            border-color: #233630 !important;
+        }
+        html.dark .border-\[\#3c564f\] {
+            border-color: #2b453e !important;
+        }
+        html.dark .border-white\/80 {
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        html.dark .text-\[\#2b413c\],
+        html.dark .text-\[\#253a35\],
+        html.dark .text-\[\#243733\] {
+            color: #e6f0ec !important;
+        }
+        html.dark .text-\[\#5e7770\] {
+            color: #9abfb5 !important;
+        }
+        html.dark .text-gray-600,
+        html.dark .text-gray-700,
+        html.dark .text-gray-800 {
+            color: #cbd5e1 !important;
+        }
+        html.dark .text-gray-500 {
+            color: #94a3b8 !important;
+        }
+        html.dark input,
+        html.dark select,
+        html.dark textarea {
+            background-color: #121c19 !important;
+            border-color: #293f38 !important;
+            color: #e6f0ec !important;
+        }
+        html.dark input::placeholder {
+            color: #6a8c83 !important;
+        }
+        html.dark input:focus,
+        html.dark select:focus,
+        html.dark textarea:focus {
+            border-color: #df9b28 !important;
+            background-color: #172420 !important;
+            box-shadow: 0 0 0 2px rgba(223, 155, 40, 0.25) !important;
+        }
+        html.dark #theme-toggle {
+            background-color: #1e302b !important;
+            color: #df9b28 !important;
+            border: 1px solid #293f38 !important;
+        }
+        html.dark #theme-toggle:hover {
+            background-color: #29423b !important;
+        }
+        html.dark .pos-tab-btn {
+            color: #9abfb5 !important;
+        }
+        html.dark .pos-tab-btn:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        html.dark .pos-tab-btn.bg-\[\#2b413c\] {
+            background-color: #df9b28 !important;
+            color: #0c1412 !important;
+            font-weight: 900 !important;
+            box-shadow: 0 2px 8px rgba(223, 155, 40, 0.35) !important;
+        }
+        html.dark .historial-filter-btn {
+            color: #9abfb5 !important;
+        }
+        html.dark .historial-filter-btn.bg-\[\#2b413c\] {
+            background-color: #df9b28 !important;
+            color: #0c1412 !important;
+            font-weight: 900 !important;
+        }
+        html.dark aside {
+            background-color: #101c18 !important;
+            border-right: 1px solid #233630;
+        }
+        html.dark #mobile-menu {
+            background-color: #101c18 !important;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -128,22 +266,22 @@
         }
     </script>
 </head>
-<body class="bg-[#dbe6e1] text-[#243733] min-h-screen p-2 sm:p-4 lg:p-6 flex items-center justify-center font-sans antialiased relative selection:bg-[#df9b28] selection:text-white">
+<body class="bg-[#dbe6e1] text-[#243733] h-screen w-screen min-h-screen overflow-hidden p-1.5 sm:p-2 lg:p-2.5 flex flex-col font-sans antialiased relative selection:bg-[#df9b28] selection:text-white">
 
     <!-- Ambient Gold Glow in Top-Left (Identical to Screenshot) -->
     <div class="ambient-blob"></div>
 
     <!-- Main Floating App Container with 36px rounded corners & soft mint/clay fill -->
-    <div class="w-full max-w-[1680px] min-h-[94vh] bg-[#e6ede9] rounded-[32px] md:rounded-[40px] shadow-2xl border border-white/80 p-3 sm:p-5 lg:p-7 flex flex-col lg:flex-row gap-6 relative z-10 overflow-hidden">
+    <div class="w-full h-full max-w-none bg-[#e6ede9] rounded-[22px] lg:rounded-[26px] shadow-2xl border border-white/80 p-2.5 sm:p-3 lg:p-3.5 flex flex-col lg:flex-row gap-3 lg:gap-3.5 relative z-10 overflow-hidden">
         
         <!-- Persistent Left Sidebar (Deep forest teal #2b413c matching screenshot) -->
-        <aside class="hidden lg:flex w-72 flex-shrink-0 bg-[#2b413c] text-white rounded-[28px] p-6 flex-col justify-between shadow-xl relative overflow-hidden">
+        <aside class="hidden lg:flex w-60 xl:w-64 flex-shrink-0 bg-[#2b413c] text-white rounded-[18px] lg:rounded-[22px] p-3.5 lg:p-4 flex flex-col justify-between shadow-xl relative overflow-hidden h-full">
             <!-- Subtle inner gradient glow -->
             <div class="absolute -top-24 -left-24 w-48 h-48 bg-[#df9b28]/15 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div class="space-y-7 relative z-10">
+            <div class="space-y-3.5 relative z-10">
                 <!-- Profile / Brand Header with Gold Border Ring -->
-                <div class="flex items-center gap-3.5 pb-2 border-b border-white/10">
+                <div class="flex items-center gap-3 pb-2 border-b border-white/10">
                     <div class="relative flex-shrink-0">
                         <div class="w-12 h-12 rounded-full ring-2 ring-[#df9b28] p-1 bg-white/10 flex items-center justify-center overflow-hidden shadow-md">
                             <img src="./logo.png" onerror="this.onerror=null; this.src='https://i.ibb.co/8DrnvJkc/1000062202-removebg-preview.png'" alt="Lo de Mari" class="w-full h-full object-contain rounded-full">
@@ -157,36 +295,36 @@
                 </div>
 
                 <!-- Navigation List with Active Cutout Mint Pill Style -->
-                <nav class="flex flex-col space-y-1.5">
-                    <button class="nav-btn w-full text-left px-4 py-3 rounded-2xl font-bold flex items-center gap-3 transition-all cursor-pointer" data-view="vender">
+                <nav class="flex flex-col space-y-1">
+                    <button class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl font-bold flex items-center gap-2.5 transition-all cursor-pointer text-sm" data-view="vender">
                         <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         <span>1. Vender</span>
                     </button>
-                    <button class="nav-btn w-full text-left px-4 py-3 rounded-2xl font-medium flex items-center gap-3 transition-all cursor-pointer" data-view="deudores">
+                    <button class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl font-medium flex items-center gap-2.5 transition-all cursor-pointer text-sm" data-view="deudores">
                         <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         <span>2. Deudores</span>
                     </button>
-                    <button class="nav-btn w-full text-left px-4 py-3 rounded-2xl font-medium flex items-center gap-3 transition-all cursor-pointer" data-view="cierre-caja">
+                    <button class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl font-medium flex items-center gap-2.5 transition-all cursor-pointer text-sm" data-view="cierre-caja">
                         <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         <span>3. Cierre de Caja</span>
                     </button>
-                    <button class="nav-btn w-full text-left px-4 py-3 rounded-2xl font-medium flex items-center gap-3 transition-all cursor-pointer" data-view="inventario">
+                    <button class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl font-medium flex items-center gap-2.5 transition-all cursor-pointer text-sm" data-view="inventario">
                         <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                         <span>4. Inventario</span>
                     </button>
-                    <button class="nav-btn w-full text-left px-4 py-3 rounded-2xl font-medium flex items-center gap-3 transition-all cursor-pointer" data-view="finanzas">
+                    <button class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl font-medium flex items-center gap-2.5 transition-all cursor-pointer text-sm" data-view="finanzas">
                         <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span>5. Finanzas</span>
                     </button>
-                    <button class="nav-btn w-full text-left px-4 py-3 rounded-2xl font-medium flex items-center gap-3 transition-all cursor-pointer" data-view="verduleria">
+                    <button class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl font-medium flex items-center gap-2.5 transition-all cursor-pointer text-sm" data-view="verduleria">
                         <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span>6. Resumen Verdulería</span>
                     </button>
-                    <button class="nav-btn w-full text-left px-4 py-3 rounded-2xl font-medium flex items-center gap-3 transition-all cursor-pointer" data-view="historial">
+                    <button class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl font-medium flex items-center gap-2.5 transition-all cursor-pointer text-sm" data-view="historial">
                         <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span>7. Historial</span>
                     </button>
-                    <button class="nav-btn w-full text-left px-4 py-3 rounded-2xl font-medium flex items-center gap-3 transition-all cursor-pointer" data-view="configuracion">
+                    <button class="nav-btn w-full text-left px-3.5 py-2.5 rounded-xl font-medium flex items-center gap-2.5 transition-all cursor-pointer text-sm" data-view="configuracion">
                         <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         <span>8. Configuración</span>
                     </button>
@@ -194,8 +332,8 @@
             </div>
 
             <!-- Bottom Offline / IndexedDB Status Indicator -->
-            <div class="mt-6 pt-4 border-t border-white/10 relative z-10 flex flex-col gap-2">
-                <div class="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-xs text-[#9abfb5]">
+            <div class="mt-4 pt-3 border-t border-white/10 relative z-10 flex flex-col gap-2">
+                <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-[#9abfb5]">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span class="font-bold text-white">IndexedDB Activo</span>
                     <span class="text-[10px] text-white/50 ml-auto">Offline</span>
@@ -204,9 +342,9 @@
         </aside>
 
         <!-- Right Main Column (Top Bar + Main Views) -->
-        <div class="flex-1 flex flex-col gap-5 overflow-hidden min-w-0">
+        <div class="flex-1 flex flex-col gap-3 lg:gap-3.5 overflow-hidden min-w-0 h-full">
             <!-- Top Control Bar (Clean white card matching screenshot) -->
-            <header class="bg-white rounded-3xl p-3 sm:p-4 shadow-sm border border-[#d8e2dc] flex flex-wrap items-center justify-between gap-3">
+            <header class="bg-white rounded-2xl p-2.5 sm:p-3 shadow-sm border border-[#d8e2dc] flex flex-wrap items-center justify-between gap-2.5 flex-shrink-0">
                 <div class="flex items-center gap-3">
                     <!-- Mobile Hamburger Button -->
                     <button id="menu-toggle-btn" class="lg:hidden p-2.5 rounded-2xl bg-[#f0f5f2] hover:bg-[#e4ede8] text-[#2b413c] transition-colors cursor-pointer" aria-label="Abrir menú">
@@ -254,16 +392,16 @@
             </header>
 
             <!-- Main Content Container with Views -->
-            <main id="main-content" class="w-full flex-1 overflow-y-auto no-scrollbar pr-1 pb-4">
+            <main id="main-content" class="w-full flex-1 overflow-y-auto no-scrollbar pr-1 pb-1 min-h-0">
 
-                <div id="view-vender" class="view hidden">
-                    <div class="pos-order-card grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
-                        <!-- Col 1: Search & Actions -->
-                        <div id="pos-col-1" class="w-full space-y-5 lg:col-span-2"></div>
-                        <!-- Col 2: Item List -->
-                        <div id="pos-col-2" class="w-full lg:col-span-2"></div>
-                        <!-- Col 3: Pending Sales -->
-                        <div id="pending-sales-section" class="bg-white rounded-3xl p-6 shadow-sm border border-[#d8e2dc] w-full h-fit">
+                <div id="view-vender" class="view hidden h-full">
+                    <div class="pos-order-card grid grid-cols-1 lg:grid-cols-12 gap-3.5 lg:gap-4 items-start">
+                        <!-- Col 1: Search & Actions (Buscador y Cobro) -->
+                        <div id="pos-col-1" class="w-full space-y-3.5 lg:col-span-4 xl:col-span-4"></div>
+                        <!-- Col 2: Item List (Pedido Actual) -->
+                        <div id="pos-col-2" class="w-full lg:col-span-5 xl:col-span-5"></div>
+                        <!-- Col 3: Pending Sales (Pendientes) -->
+                        <div id="pending-sales-section" class="bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 shadow-sm border border-[#d8e2dc] w-full lg:col-span-3 xl:col-span-3 h-fit">
                             <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#e4ede8]">
                                 <h3 class="text-lg font-black text-[#2b413c] flex items-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#df9b28]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -273,7 +411,7 @@
                                 </h3>
                                 <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e] font-bold">Espera</span>
                             </div>
-                            <ul id="pending-sales-list" class="space-y-3 max-h-[calc(100vh-18rem)] min-h-[38rem] overflow-y-auto no-scrollbar"></ul>
+                            <ul id="pending-sales-list" class="space-y-2.5 max-h-[calc(100vh-14rem)] min-h-[16rem] overflow-y-auto no-scrollbar"></ul>
                         </div>
                     </div>
                 </div>
@@ -281,19 +419,19 @@
                 <div id="pos-orders-content" class="hidden"></div>
 
                 <template id="pos-order-template">
-                    <div class="pos-order-card w-full space-y-5">
+                    <div class="pos-order-card w-full space-y-3">
                         <!-- Card 1: Add Product (Clean White Card) -->
-                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#d8e2dc] space-y-4">
+                        <div class="bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 shadow-sm border border-[#d8e2dc] space-y-3">
                             <div class="flex items-center justify-between pb-2 border-b border-[#e4ede8]">
                                 <span class="text-xs font-bold uppercase tracking-wider text-[#5e7770]">1. Agregar Producto</span>
                                 <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#f0f5f2] text-[#2b413c] font-semibold">Buscador Rápido</span>
                             </div>
                             <div class="space-y-3">
-                                <input type="search" class="pos-search w-full p-3.5 text-base border border-[#d8e2dc] rounded-2xl bg-[#f4f8f6] focus:bg-white focus:border-[#df9b28] focus:ring-2 focus:ring-[#df9b28]/20 transition-all font-medium text-[#253a35]" placeholder="🔍 Buscar por nombre o código...">
-                                <select class="pos-product w-full p-3.5 text-base border border-[#d8e2dc] rounded-2xl bg-[#f4f8f6] focus:bg-white focus:border-[#df9b28] focus:ring-2 focus:ring-[#df9b28]/20 transition-all font-medium text-[#253a35]"><option value="">Seleccione producto...</option></select>
+                                <input type="search" class="pos-search w-full p-3 text-sm sm:text-base border border-[#d8e2dc] rounded-xl bg-[#f4f8f6] focus:bg-white focus:border-[#df9b28] focus:ring-2 focus:ring-[#df9b28]/20 transition-all font-medium text-[#253a35]" placeholder="🔍 Buscar por nombre o código...">
+                                <select class="pos-product w-full p-3 text-sm sm:text-base border border-[#d8e2dc] rounded-xl bg-[#f4f8f6] focus:bg-white focus:border-[#df9b28] focus:ring-2 focus:ring-[#df9b28]/20 transition-all font-medium text-[#253a35]"><option value="">Seleccione producto...</option></select>
                                 <div class="flex gap-3">
-                                    <input type="number" class="pos-quantity w-1/2 p-3.5 text-base border border-[#d8e2dc] rounded-2xl bg-[#f4f8f6] focus:bg-white focus:border-[#df9b28] focus:ring-2 focus:ring-[#df9b28]/20 transition-all font-black text-[#253a35]" value="1" min="0.1" step="any">
-                                    <button class="pos-add-item w-1/2 bg-[#2b413c] hover:bg-[#1e2f2b] text-white font-bold py-3.5 px-4 rounded-2xl text-base transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+                                    <input type="number" class="pos-quantity w-1/2 p-3 text-sm sm:text-base border border-[#d8e2dc] rounded-xl bg-[#f4f8f6] focus:bg-white focus:border-[#df9b28] focus:ring-2 focus:ring-[#df9b28]/20 transition-all font-black text-[#253a35]" value="1" min="0.1" step="any">
+                                    <button class="pos-add-item w-1/2 bg-[#2b413c] hover:bg-[#1e2f2b] text-white font-bold py-3 px-4 rounded-xl text-sm sm:text-base transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
                                         <svg class="w-5 h-5 text-[#df9b28]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v12m6-6H6"/></svg>
                                         <span>Agregar</span>
                                     </button>
@@ -302,7 +440,7 @@
                         </div>
 
                         <!-- Card 2: Item List (Clean White Card) -->
-                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#d8e2dc] flex flex-col h-full">
+                        <div class="bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 shadow-sm border border-[#d8e2dc] flex flex-col h-full">
                             <div class="flex justify-between items-center mb-4 pb-2 border-b border-[#e4ede8]">
                                 <h3 class="text-xl font-black text-[#2b413c] flex items-center gap-2">
                                     <svg class="w-5 h-5 text-[#df9b28]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
@@ -310,11 +448,11 @@
                                 </h3>
                                 <span class="text-xs px-3 py-1 rounded-full bg-[#e6ede9] text-[#2b413c] font-bold">En Curso</span>
                             </div>
-                            <ul class="pos-item-list overflow-y-auto no-scrollbar space-y-2 p-1 flex-1 max-h-[calc(100vh-20rem)] min-h-[38rem]"></ul>
+                            <ul class="pos-item-list overflow-y-auto no-scrollbar space-y-2 p-1 flex-1 max-h-[calc(100vh-14rem)] min-h-[16rem]"></ul>
                         </div>
                 
                         <!-- Card 3: Totals & Checkout (Signature Dark Teal Card Matching Screenshot) -->
-                        <div class="bg-[#2b413c] text-white rounded-3xl p-6 shadow-xl border border-[#3c564f] space-y-5 relative overflow-hidden">
+                        <div class="bg-[#2b413c] text-white rounded-2xl lg:rounded-3xl p-4 sm:p-5 shadow-xl border border-[#3c564f] space-y-4 relative overflow-hidden">
                             <!-- Glow ambient gold circle inside card -->
                             <div class="absolute -top-16 -right-16 w-36 h-36 bg-[#df9b28]/15 rounded-full blur-2xl pointer-events-none"></div>
                             
@@ -1171,7 +1309,48 @@
         }
 
         function setupHamburgerMenu() { const btn = document.getElementById('menu-toggle-btn'), menu = document.getElementById('mobile-menu'), overlay = document.getElementById('menu-overlay'); btn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }); overlay.addEventListener('click', () => { menu.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }); }
-        function setupThemeToggle() { const btn = document.getElementById('theme-toggle'), light = document.getElementById('theme-toggle-light'), dark = document.getElementById('theme-toggle-dark'), html = document.documentElement; const update = () => { const isDark = html.classList.contains('dark'); light.classList.toggle('hidden', !isDark); dark.classList.toggle('hidden', isDark); localStorage.setItem('loDeMari_theme', isDark ? 'dark' : 'light'); const textColor = isDark ? '#FFF' : '#333'; if (financeChart) { try { financeChart.options.plugins.legend.labels.color = textColor; financeChart.options.plugins.title.color = textColor; financeChart.update('none'); } catch (e) { console.error("Error updating chart colors:", e); } } }; if (localStorage.getItem('loDeMari_theme') === 'dark') { html.classList.add('dark'); } else { html.classList.remove('dark'); } update(); btn.addEventListener('click', () => { html.classList.toggle('dark'); update(); }); }
+        function setupThemeToggle() {
+            const btn = document.getElementById('theme-toggle');
+            const light = document.getElementById('theme-toggle-light');
+            const dark = document.getElementById('theme-toggle-dark');
+            const html = document.documentElement;
+
+            const update = () => {
+                const isDark = html.classList.contains('dark');
+                if (light) light.classList.toggle('hidden', !isDark);
+                if (dark) dark.classList.toggle('hidden', isDark);
+                localStorage.setItem('loDeMari_theme', isDark ? 'dark' : 'light');
+                const textColor = isDark ? '#e6f0ec' : '#243733';
+                if (financeChart) {
+                    try {
+                        if (financeChart.options?.plugins?.legend?.labels) financeChart.options.plugins.legend.labels.color = textColor;
+                        if (financeChart.options?.plugins?.title) financeChart.options.plugins.title.color = textColor;
+                        financeChart.update('none');
+                    } catch (e) { console.error("Error updating chart colors:", e); }
+                }
+            };
+
+            const saved = localStorage.getItem('loDeMari_theme');
+            if (saved === 'dark') {
+                html.classList.add('dark');
+            } else if (saved === 'light') {
+                html.classList.remove('dark');
+            } else {
+                // Si no hay preferencia guardada, respetamos la clase inicial o preferencia de sistema
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    html.classList.add('dark');
+                }
+            }
+            update();
+
+            if (btn) {
+                btn.onclick = (e) => {
+                    e.preventDefault();
+                    html.classList.toggle('dark');
+                    update();
+                };
+            }
+        }
         function setupSearchFilters() { document.getElementById('inventory-search').addEventListener('input', (e) => { InventoryService.render(e.target.value); localStorage.setItem(APP_STATE_PREFIX + 'inventory-search', e.target.value); }); document.getElementById('debtor-search').addEventListener('input', (e) => { renderDebtorList(e.target.value); localStorage.setItem(APP_STATE_PREFIX + 'debtor-search', e.target.value); }); }
         function showToast(message, isError = false) { const t = document.getElementById('toast'), m = document.getElementById('toast-message'); m.textContent = message; t.className = `fixed bottom-20 right-5 text-white py-2 px-4 rounded-lg shadow-lg transform transition-transform duration-300 z-50 ${isError ? 'bg-red-600' : 'bg-green-600'}`; t.classList.remove('translate-x-[120%]'); setTimeout(() => { t.classList.add('translate-x-[120%]'); }, 3000); }
         function showModal(title, message) { const m = document.getElementById('confirm-modal'); document.getElementById('modal-title').textContent = title; document.getElementById('modal-message').textContent = message; m.classList.remove('hidden'); return new Promise((res) => { document.getElementById('modal-confirm-btn').onclick = () => { m.classList.add('hidden'); res(true); }; document.getElementById('modal-cancel-btn').onclick = () => { m.classList.add('hidden'); res(false); }; }); }
