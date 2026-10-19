@@ -1,2 +1,13 @@
 # Ignorar backups y archivos de datos
 *.json
+
+# === Seguridad y credenciales ===
+.env*
+*.key
+*.pem
+*.cert
+*.crt
+*.pfx
+secrets.*
+credentials.*
+id_rsa*
